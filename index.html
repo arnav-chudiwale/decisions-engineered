@@ -1,0 +1,724 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arnav Chudiwale · Decisions, engineered.</title>
+<meta name="description" content="Arnav Chudiwale: optimization and supply chain decisions, from public-sector AI at EY to network design and delivery operations. Available from June 2027.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,300..700;1,300..700&family=Instrument+Serif:ital@0;1&family=Mrs+Saint+Delafield&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi:ital@1&text=%E0%A4%A8%E0%A4%AE%E0%A4%B8%E0%A5%8D%E0%A4%A4%E0%A5%87&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:ital@1&text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7&display=swap">
+<style>
+/* Layout: one figure, one grammar. Many faint feasible paths → one point → one bronze line. The line leaves the hero and becomes the thread that carries the reader to the final decision. Single committed look: ivory by day, one night band. */
+:root{
+  --ivory:#F4EFE6; --sand:#E9E0D0; --ink:#16171B; --night:#0F1114;
+  --bronze:#8A6427; --champagne:#D8B26A; --graphite:#5B564D; --stone:#8C8579; --body:#2B2A27;
+  --rule:rgba(22,23,27,.14); --mist:#D9D3C7;
+  --voice:'Hanken Grotesk', 'Helvetica Neue', Arial, sans-serif;
+  --grace:'Instrument Serif', 'Times New Roman', Georgia, serif;
+  --hand:'Mrs Saint Delafield', 'Snell Roundhand', cursive;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --gutter:clamp(20px,5vw,72px);
+  color-scheme:light;
+}
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+body{background:var(--ivory);color:var(--ink);font-family:var(--voice);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+a:focus-visible,button:focus-visible{outline:1px solid var(--bronze);outline-offset:4px}
+em{font-family:var(--grace);font-style:italic;font-weight:400;letter-spacing:-.01em}
+.wrap{max-width:1280px;margin:0 auto;padding-inline:var(--gutter);position:relative;z-index:1}
+.label{font-size:14px;font-weight:500;color:var(--graphite)}
+.label--accent{color:var(--bronze)}
+h1,h2,h3{font-weight:500;margin:0;text-wrap:balance}
+.line{padding-bottom:.06em}
+main{position:relative}
+
+/* the thread: the optimal line, continued */
+.thread{position:absolute;left:0;top:0;width:100%;pointer-events:none;z-index:0;overflow:visible}
+.thread path{fill:none;stroke:var(--bronze);stroke-width:1.2;stroke-opacity:.6;stroke-linecap:round}
+.thread .tip{fill:var(--bronze)}
+.thread .tipHalo{fill:none;stroke:var(--bronze);stroke-opacity:.35;stroke-width:1}
+.thread .end{fill:var(--ivory);stroke:var(--bronze);stroke-width:1.6}
+
+/* nav */
+.nav{position:fixed;top:0;left:0;right:0;z-index:20;padding-top:env(safe-area-inset-top,0px);transition:background .6s var(--ease),border-color .6s var(--ease);border-bottom:1px solid transparent}
+.nav.is-solid{background:rgba(244,239,230,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-color:var(--rule)}
+.nav__in{display:flex;flex-wrap:wrap;gap:12px 32px;align-items:center;justify-content:space-between;padding-block:22px}
+.brand{display:flex;align-items:baseline;gap:12px;text-decoration:none}
+.brand em{font-size:30px;color:var(--bronze);line-height:1}
+.brand span{font-size:16px;font-weight:500;letter-spacing:-.02em}
+.nav ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:28px;font-size:15px;font-weight:500}
+.nav ul a{text-decoration:none;position:relative}
+.nav ul a::after{content:"";position:absolute;left:0;right:0;bottom:-5px;height:1px;background:var(--bronze);transform:scaleX(0);transform-origin:right;transition:transform .7s var(--ease)}
+.nav ul a:hover::after{transform:scaleX(1);transform-origin:left}
+
+/* hero */
+.hero{padding-block:170px 10px}
+.hero__grid{display:flex;flex-wrap:wrap;gap:56px;align-items:stretch}
+.hero__main{flex:1 1 620px;min-width:0}
+.hero h1{font-size:clamp(58px,10vw,156px);line-height:.92;letter-spacing:-.055em}
+.hero h1 em{color:var(--bronze);letter-spacing:-.02em}
+.hero__main{position:relative}
+.hero__nib{position:absolute;left:0;top:0;will-change:transform,opacity;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:var(--bronze);box-shadow:0 0 6px rgba(196,148,62,.55);pointer-events:none;opacity:0;z-index:2}
+.hero__sub{margin:38px 0 0;max-width:34em;font-size:clamp(18px,1.6vw,21px);font-weight:300;color:var(--body)}
+.ctas{margin-top:42px;display:flex;flex-wrap:wrap;gap:28px;align-items:center}
+.btn{display:inline-block;font-size:15px;font-weight:500;text-decoration:none;padding:19px 32px;background:var(--ink);color:var(--ivory);will-change:transform}
+.btn--line{background:transparent;color:var(--ink);padding:0 0 5px;border-bottom:1px solid var(--ink)}
+.contents{flex:0 1 360px;min-width:260px;border-top:1px solid var(--ink);padding-top:16px;background:var(--ivory);display:flex;flex-direction:column;margin-top:calc(clamp(58px,10vw,156px) * .1)}
+.contents > .label{font-size:15px}
+.contents ol{list-style:none;margin:10px 0 0;padding:0}
+.contents li{display:flex;gap:18px;align-items:baseline;padding-block:13px;border-bottom:1px solid var(--rule);font-size:clamp(18px,1.45vw,21px);letter-spacing:-.01em}
+.contents li em{font-size:1.2em;color:var(--bronze);width:22px;flex:none}
+.contents__avail{margin:auto 0 0;padding-top:28px;display:flex;flex-direction:column;gap:6px}
+.contents__avail span{font-size:15px;font-weight:500;color:var(--graphite)}
+.contents__avail b{font-weight:400;font-size:clamp(22px,1.9vw,28px);letter-spacing:-.025em;line-height:1.1;color:var(--ink)}
+@media (min-width:1040px){.contents li{padding-block:15px}}
+@media (max-width:1039px){.contents{flex-basis:100%}}
+
+/* hero figure */
+.fig{margin:24px 0 0;position:relative;z-index:1}
+.fig svg{display:block;width:100%;height:auto;overflow:visible}
+.tangle path{fill:none;stroke:var(--ink);stroke-opacity:.24;stroke-width:.9}
+.nodes circle{fill:var(--ink);fill-opacity:.4}
+.ribbon path{fill:none;stroke:var(--bronze);stroke-opacity:.4;stroke-width:.9}
+.optimal{fill:none;stroke:var(--bronze);stroke-width:2.2;stroke-linecap:round}
+.fig text{font-family:var(--grace);font-style:italic;font-size:22px;fill:var(--graphite)}
+.fig text.o{fill:var(--bronze)}
+.fig figcaption{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;padding-top:14px;font-size:14px;color:var(--graphite)}
+.fig figcaption em{font-size:17px;color:var(--ink)}
+
+/* note */
+.note{padding-top:170px;display:flex;flex-wrap:wrap;gap:72px;align-items:center}
+.portrait{flex:0 1 420px;min-width:240px;margin:0}
+.portrait__frame{overflow:hidden;aspect-ratio:1438/1600;max-width:100%;background:var(--sand)}
+.portrait__frame img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 40%;transform:scale(1.06);will-change:transform}
+.portrait figcaption{margin-top:12px;display:flex;justify-content:space-between;gap:12px}
+.note__body{flex:1 1 500px;min-width:0}
+.note__hello{margin:0;font-family:var(--grace);font-style:italic;font-size:clamp(46px,5vw,62px);line-height:1;color:var(--bronze);position:relative;height:1.25em;display:flex;align-items:center}
+.hello__word{display:inline-block;white-space:nowrap;padding:.08em .14em .12em 0;line-height:1.1;will-change:clip-path,opacity,transform}
+.hello__word:lang(hi){font-family:'Tiro Devanagari Hindi',var(--grace);font-size:.8em;padding-top:.2em}
+.hello__word:lang(ar){font-family:'Amiri',var(--grace);font-size:.92em;padding:.1em 0 .12em .14em}
+.hello__nib{position:absolute;left:0;top:56%;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:var(--bronze);opacity:0;pointer-events:none}
+.note__body p.t{margin:24px 0 0;max-width:33em;font-size:clamp(18px,1.5vw,21px);font-weight:300;color:var(--body)}
+.note__body p.t em{font-size:1.15em;color:var(--ink)}
+.note__body .gold{color:var(--bronze);font-weight:500}
+.note__body p.t em.gold{font-weight:400;color:var(--bronze)}
+.note__body p.t--lead{margin-top:20px;font-size:clamp(30px,3vw,42px);line-height:1.12;font-weight:400;letter-spacing:-.03em;color:var(--ink)}
+.note__body p.t--lead em{font-size:1.08em;color:var(--bronze)}
+.signature{margin-top:30px;font-family:var(--hand);font-size:clamp(44px,11vw,96px);line-height:.85;display:inline-block;position:relative;white-space:nowrap;padding:0 .25em .18em 0;color:var(--ink)}
+.signature__ink{display:inline-block}
+.signature__flourish{position:absolute;left:4%;right:2%;bottom:-.02em;width:96%;height:.26em;overflow:visible}
+.signature__flourish path{fill:none;stroke:var(--bronze);stroke-width:1.3;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.signature__nib{position:absolute;left:0;top:52%;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;border-radius:50%;background:var(--bronze);opacity:0;pointer-events:none}
+
+/* decisions */
+.sec{padding-top:170px}
+.sec__head{display:flex;flex-wrap:wrap;gap:40px;align-items:flex-end;justify-content:space-between}
+.sec__head h2{flex:1 1 600px;min-width:0;font-size:clamp(40px,5.2vw,72px);line-height:1;letter-spacing:-.045em}
+.sec__head h2 em{color:var(--bronze)}
+.sec__head p{flex:0 1 380px;margin:0;font-weight:300;color:var(--body)}
+.grid{margin-top:72px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.tile{background:var(--ivory);padding:clamp(28px,4vw,48px);display:flex;flex-direction:column;gap:20px;text-decoration:none;color:inherit;transition:background .8s var(--ease)}
+.tile:hover{background:#EFE7DA}
+.mini{display:block;width:100%;height:auto;max-width:100%;overflow:visible}
+.mini .t{fill:none;stroke:var(--ink);stroke-opacity:.2;stroke-width:.8}
+.mini .r{fill:none;stroke:var(--bronze);stroke-opacity:.35;stroke-width:.8}
+.mini .o{fill:none;stroke:var(--bronze);stroke-width:1.8;stroke-linecap:round}
+.mini .c{fill:var(--ivory);stroke:var(--bronze);stroke-width:1.3}
+.tile__idx{display:flex;align-items:center;gap:14px}
+.tile__idx i{display:block;width:28px;height:1px;background:var(--bronze);transition:width .9s var(--ease)}
+.tile:hover .tile__idx i{width:56px}
+.tile h3{font-size:clamp(30px,2.8vw,38px);letter-spacing:-.04em;line-height:1.05}
+.tile q{font-family:var(--grace);font-style:italic;font-size:clamp(22px,2vw,27px);line-height:1.28;color:var(--body);quotes:"“" "”"}
+.tile dl{margin:4px 0 0;padding-top:16px;border-top:1px solid var(--rule);display:grid;grid-template-columns:96px minmax(0,1fr);gap:10px 16px;font-size:15px}
+.tile dd{margin:0}
+.tile__foot{margin-top:auto;display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between}
+.tile__n{font-size:40px;font-weight:400;letter-spacing:-.035em;line-height:1}
+.tile__n em{color:var(--bronze)}
+.tile__go{font-size:15px;font-weight:500;border-bottom:1px solid var(--ink);padding-bottom:4px;display:inline-flex;gap:10px}
+.tile__go b{font-weight:400;display:inline-block;transition:transform .8s var(--ease)}
+.tile:hover .tile__go b{transform:translateX(6px)}
+.coda{margin:30px 0 0;display:flex;flex-wrap:wrap;gap:12px;align-items:baseline;font-weight:300}
+.coda em{font-size:24px}
+
+/* inside a decision */
+.inside{padding-top:170px;display:flex;flex-wrap:wrap;gap:56px;align-items:center}
+.inside__text{flex:1 1 420px;min-width:0}
+.inside__text h2{margin-top:18px;font-size:clamp(40px,5vw,68px);line-height:1;letter-spacing:-.045em}
+.inside__text h2 em{color:var(--bronze)}
+.inside__text p{margin:26px 0 0;max-width:30em;font-weight:300;color:var(--body)}
+.counter{margin-top:30px;display:flex;align-items:baseline;gap:14px}
+.counter b{font-size:56px;font-weight:300;letter-spacing:-.045em;line-height:1;font-variant-numeric:tabular-nums;min-width:2.2ch}
+.counter span{font-size:15px;color:var(--graphite)}
+.again{margin-top:26px;font:inherit;font-size:15px;font-weight:500;background:none;border:0;border-bottom:1px solid var(--ink);padding:0 0 4px;cursor:pointer;color:var(--ink)}
+.inside__map{flex:1 1 440px;min-width:0;margin:0;background:var(--ivory)}
+.inside__map svg{display:block;width:100%;height:auto}
+.inside__map .link{fill:none;stroke:var(--ink);stroke-opacity:.28;stroke-width:.7}
+.inside__map .link.best{stroke:var(--bronze);stroke-opacity:.6}
+.inside__map .store{fill:var(--ink)}
+.inside__map .site{fill:var(--ivory);stroke:var(--stone);stroke-width:1;stroke-dasharray:2 3}
+.inside__map .site.open{stroke:var(--bronze);stroke-width:1.6;stroke-dasharray:none}
+.inside__map text{font-family:var(--grace);font-style:italic;font-size:15px;fill:var(--graphite)}
+.inside__map figcaption{margin-top:10px;font-size:14px;color:var(--graphite)}
+.inside__map figcaption em{font-size:17px;color:var(--ink)}
+
+/* night */
+.night{margin-top:72px;background:var(--night);color:var(--ivory);position:relative;overflow:hidden;z-index:1}
+.night svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.night .ribbon2 path{fill:none;stroke:var(--champagne);stroke-opacity:.12;stroke-width:.8}
+.night .wrap{padding-block:120px}
+.night__grid{display:flex;flex-wrap:wrap;gap:56px 72px;align-items:flex-end}
+.night__main{flex:1 1 600px;min-width:0}
+.night .label{color:var(--champagne);font-size:16px}
+.night__label{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;line-height:1.4}
+.night__idx{display:inline-flex;align-items:center;gap:14px;margin-right:6px}
+.night__dot{opacity:.6}
+@media (max-width:560px){.night__dot{display:none}}
+.night__idx i{display:block;width:28px;height:1px;background:var(--champagne)}
+.night__side{flex:0 1 380px;min-width:240px;display:flex;flex-direction:column;gap:44px}
+.night__logo{display:block;height:64px;width:auto;max-width:160px;object-fit:contain;object-position:left;filter:brightness(0) invert(1);opacity:.82}
+.night__facts{margin:0;display:grid;grid-template-columns:112px minmax(0,1fr);gap:16px 18px;font-size:17px;line-height:1.5;color:var(--mist);border-top:1px solid rgba(216,178,106,.45);padding-top:18px;position:relative}
+.night__facts dt{font-weight:500;color:var(--champagne)}
+.night__facts dd{margin:0}
+.night__facts dd.night__out{color:var(--ivory);font-weight:500}
+.grid-sec .grid{margin-top:72px}
+.tile--peek{grid-column:1/-1;flex-direction:row;flex-wrap:wrap;gap:40px 64px;align-items:center;background:var(--sand)}
+.tile--peek:hover{background:#E4D9C6}
+.peek__text{flex:1 1 460px;min-width:0;display:flex;flex-direction:column;gap:18px}
+.peek__body{margin:0;font-weight:300;color:var(--body);max-width:40em}
+.tile--peek dl{margin:4px 0 0;padding-top:16px;border-top:1px solid var(--rule);display:grid;grid-template-columns:96px minmax(0,1fr);gap:10px 16px;font-size:15px}
+.tile--peek dd{margin:0}
+.peek__fig{flex:0 1 380px;min-width:240px;margin:0}
+.peek__fig svg{display:block;width:100%;height:auto}
+.peek__fig .ax{stroke:var(--ink);stroke-opacity:.35;stroke-width:1}
+.peek__fig .cv{fill:none;stroke:var(--bronze);stroke-width:2;stroke-linecap:round}
+.peek__fig .pt{fill:var(--sand);stroke:var(--bronze);stroke-width:1.6}
+.peek__fig .pt.k{fill:var(--bronze)}
+.peek__fig text{font-family:var(--grace);font-style:italic;font-size:17px;fill:var(--graphite)}
+.peek__fig text.k{fill:var(--bronze)}
+.peek__fig text.axl{font-family:var(--voice);font-style:normal;font-size:13px}
+.peek__fig figcaption{margin-top:8px;font-size:14px;color:var(--graphite)}
+.contents__now span{color:var(--bronze)}
+
+.night blockquote{margin:34px 0 0;max-width:22em;font-size:clamp(28px,3.6vw,48px);line-height:1.18;letter-spacing:-.025em;font-weight:400}
+.night blockquote em{color:var(--champagne)}
+.night p{margin:34px 0 0;max-width:34em;font-weight:300;color:var(--mist)}
+.night .wrap.night__grid{padding-bottom:80px}
+.night .wrap.night__why{padding-block:0 110px}
+.night__whyhead{padding-top:24px;border-top:1px solid rgba(216,178,106,.45);font-size:18px;font-weight:500;color:var(--ivory)}
+.night__why ol{list-style:none;margin:34px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:40px 56px}
+@media (max-width:900px){.night__why ol{grid-template-columns:minmax(0,1fr)}}
+.night__why ol > li{display:flex;flex-direction:column;gap:18px}
+.night__why ol > li::before{content:"";display:block;width:28px;height:1px;background:var(--champagne);margin-bottom:6px}
+.night__res{margin-top:auto;padding-top:18px;border-top:1px solid rgba(216,178,106,.25);font-size:20px;font-weight:500;letter-spacing:-.02em;color:var(--ivory)}
+.night__q{font-size:34px;line-height:1.1;color:var(--champagne)}
+.night__pts{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.night__pts li{position:relative;padding-left:22px;font-size:18px;line-height:1.55;font-weight:300;color:var(--mist)}
+.night__pts li::before{content:"";position:absolute;left:0;top:.78em;width:10px;height:1px;background:var(--champagne)}
+.night__pts li.sub{margin-left:22px;font-size:17px}
+.night__pts li.sub::before{width:6px;background:rgba(216,178,106,.7)}
+.night__intro{margin-top:36px;max-width:36em}
+.night__intro li{font-size:19px}
+.night a.more{display:inline-block;margin-top:38px;color:var(--champagne);text-decoration:none;border-bottom:1px solid var(--champagne);padding-bottom:4px;font-size:15px;font-weight:500}
+
+/* contact */
+.contact h2{max-width:16em;font-size:clamp(42px,6.6vw,100px);line-height:.98;letter-spacing:-.05em}
+.contact h2 em{color:var(--bronze)}
+.contact__row{margin-top:46px;display:flex;flex-wrap:wrap;gap:40px 64px;align-items:flex-end;justify-content:space-between}
+.contact__row p{flex:1 1 380px;margin:0;max-width:32em;font-weight:300;color:var(--body)}
+.contact__links{display:flex;flex-direction:column;gap:16px;align-items:flex-start}
+.contact__btns{display:flex;flex-wrap:wrap;gap:14px}
+.contact__mail{font-size:17px;color:var(--graphite);text-decoration:none;border-bottom:1px solid var(--rule);padding-bottom:2px;transition:color .3s,border-color .3s}
+.contact__mail:hover{color:var(--bronze);border-color:var(--bronze)}
+.btn--ghost{background:var(--ivory);color:var(--ink);border:1px solid var(--ink);padding:18px 31px}
+.landing{height:220px}
+footer{border-top:1px solid var(--rule);padding-block:28px 56px;position:relative;z-index:1;background:var(--ivory)}
+footer .wrap{display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:space-between;align-items:baseline;font-size:14px;color:var(--graphite)}
+footer em{font-size:20px;color:var(--ink)}
+
+.study{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:30;display:flex;gap:10px;align-items:center;background:var(--ink);color:var(--ivory);padding:8px 8px 8px 16px;font-size:13px;font-weight:500}
+.study button{font:inherit;background:var(--ivory);color:var(--ink);border:0;padding:9px 14px;cursor:pointer}
+@media (max-width:600px){.study span{display:none}}
+
+/* gilt: polished gold for the display moments, a soft metallic modulation at rest, one highlight sweeping through on arrival */
+:root{
+  --gild-day:linear-gradient(100deg,#7A561F 0%,#A47A33 13%,#87622A 27%,#9D7431 40%,#E4BC68 50%,#9D7431 60%,#87622A 73%,#A47A33 87%,#7A561F 100%);
+  --gild-night:linear-gradient(100deg,#B98B3F 0%,#E2BF7A 13%,#C79C52 27%,#DDB772 40%,#FFF1C8 50%,#DDB772 60%,#C79C52 73%,#E2BF7A 87%,#B98B3F 100%);
+}
+:is(.hero h1 em, .sec__head h2 em, .inside__text h2 em, .contact h2 em, .tile__n em, .note__body p.t--lead em, .hello__word, .night blockquote em, .night__q){background-image:var(--gild-day);background-size:260% 100%;background-position:100% 50%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.night :is(.hero h1 em, .sec__head h2 em, .inside__text h2 em, .contact h2 em, .tile__n em, .note__body p.t--lead em, .hello__word, .night blockquote em, .night__q){background-image:var(--gild-night)}
+:is(.hero h1 em, .sec__head h2 em, .inside__text h2 em, .contact h2 em, .tile__n em, .note__body p.t--lead em, .hello__word, .night blockquote em, .night__q) *{background:inherit;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+@keyframes gild-sweep{from{background-position:100% 50%}to{background-position:0% 50%}}
+@keyframes gild-breathe{0%,72%{background-position:100% 50%}100%{background-position:0% 50%}}
+:is(.hero h1 em, .sec__head h2 em, .inside__text h2 em, .contact h2 em, .tile__n em, .note__body p.t--lead em, .hello__word, .night blockquote em, .night__q).is-lit{animation:gild-sweep 2.4s cubic-bezier(.45,0,.2,1) .2s both}
+.hero h1 em.is-lit{animation:gild-breathe 8s cubic-bezier(.45,0,.2,1) 1.6s infinite alternate both}
+.optimal,.thread path{filter:drop-shadow(0 0 .6px rgba(196,148,62,.55))}
+.night .ribbon2 path{stroke-opacity:.12}
+@media (prefers-reduced-motion:reduce){:is(.hero h1 em, .sec__head h2 em, .inside__text h2 em, .contact h2 em, .tile__n em, .note__body p.t--lead em, .hello__word, .night blockquote em, .night__q).is-lit{animation:none}}
+</style>
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <div class="wrap nav__in">
+    <a class="brand" href="#top"><span>Arnav Chudiwale</span></a>
+    <nav aria-label="Primary"><ul>
+      <li><a href="#decisions">Decisions</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#note">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul></nav>
+  </div>
+</header>
+
+<main id="top">
+  <svg class="thread" id="thread" aria-hidden="true">
+    <path id="threadA"></path>
+    <path id="threadB"></path>
+    <circle class="tipHalo" id="halo" r="9" cx="-50" cy="-50"></circle>
+    <circle class="tip" id="tip" r="3.2" cx="-50" cy="-50"></circle>
+    <circle class="end" id="endRing" r="9" cx="-50" cy="-50"></circle>
+    <circle class="tip" id="endDot" r="3" cx="-50" cy="-50"></circle>
+  </svg>
+
+  <section class="hero wrap">
+    <div class="hero__grid">
+      <div class="hero__main">
+        <h1 id="headline">Decisions, <em>engineered.</em></h1>
+        <p class="hero__sub" data-intro="rise">I find the best way to run an operation: where its sites go, how its fleets and schedules work, how scarce capacity is shared. Then I turn the model into a plan leaders approve.</p>
+        <div class="ctas" data-intro="rise">
+          <a class="btn magnet" href="#decisions">See the decisions</a>
+          <a class="btn btn--line" href="Arnav_Chudiwale_Resume.pdf" download="Arnav_Chudiwale_Resume.pdf" target="_blank" rel="noopener">Download résumé</a>
+        </div>
+      </div>
+      <aside class="contents" aria-label="Contents" data-intro="rise">
+        <div class="label">Contents</div>
+        <ol>
+          <li><em>1</em><span>Public-sector AI</span></li>
+          <li><em>2</em><span>Circular supply chain</span></li>
+          <li><em>3</em><span>Service resilience</span></li>
+          <li class="contents__now"><em>&#8594;</em><span>Now: Oklahoma's hidden AI Datacenter water bill</span></li>
+        </ol>
+        <p class="contents__avail"><span>Available</span><b>From June 2027</b></p>
+      </aside>
+    </div>
+  </section>
+
+  <figure class="fig" id="fig">
+    <svg viewBox="0 0 1440 420" role="img" aria-label="Many tangled feasible routes converging into one flowing optimal path">
+      <g class="tangle" id="tangle"></g>
+      <g class="nodes" id="nodes"></g>
+      <g class="ribbon" id="ribbon"></g>
+      <path class="optimal" id="optimal" d="M760 250 C960 310 1120 118 1460 70"></path>
+      <circle id="conv-ring" cx="760" cy="250" r="7" fill="#F4EFE6" stroke="#8A6427" stroke-width="1.6"></circle>
+      <circle id="conv-dot" cx="760" cy="250" r="2.4" fill="#8A6427"></circle>
+      <g id="fig-labels"><text x="64" y="406">feasible</text><text class="o" x="736" y="214">optimal</text><text x="1300" y="406">engineered</text></g>
+    </svg>
+    <figcaption class="wrap"><span><em>Fig. 1</em> — Many feasible paths. One optimal decision.</span><span>Formerly EY Government Advisory · M.S. Industrial Engineering, Oklahoma State</span></figcaption>
+  </figure>
+
+  <section class="note wrap" id="note" aria-label="A note from Arnav">
+    <figure class="portrait">
+      <div class="portrait__frame"><img id="portrait" src="portrait.jpg" alt="Arnav Chudiwale in a navy blazer, standing at the entrance of a stone building in evening light" width="1438" height="1600"></div>
+      <figcaption class="label"><span>Stillwater, Oklahoma</span><span>Local time, <span id="clock">—</span></span></figcaption>
+    </figure>
+    <div class="note__body">
+      <p class="note__hello reveal" id="hello" aria-label="Hello"><span class="hello__word" lang="en" aria-hidden="true">Hello</span><i class="hello__nib" aria-hidden="true"></i></p>
+      <p class="t t--lead reveal">My first client was <em>a government.</em></p>
+      <p class="t reveal">At <span class="gold">EY</span>, I worked inside a state agriculture department, on a program backed by the <span class="gold">World Bank</span>. I sat in their office, reported to their project director, and learned what a client really needs: a recommendation clear enough to defend to everyone above them.</p>
+      <p class="t reveal">That became my standard.</p>
+      <p class="t reveal">To build the depth behind it, I went to <span class="gold">Oklahoma State University</span> to study the mathematics of good decisions: optimization, simulation, and data analytics for operational decision-making.</p>
+      <p class="t reveal">Next, I want to do this work across borders. Walk into an unfamiliar organization, learn how it really runs, and leave it with a decision it can act on.</p>
+      <p class="t reveal">What you get from me is simple: <em class="gold">one clear answer</em>, the reasoning behind it, and an honest account of the risks.</p>
+      <div class="signature" id="signature" role="img" aria-label="Signed, Arnav Chudiwale"><span class="signature__ink" aria-hidden="true">Arnav Chudiwale</span><svg class="signature__flourish" viewBox="0 0 400 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 16 C70 6 150 22 230 13 S350 6 396 12"></path></svg><i class="signature__nib" aria-hidden="true"></i></div>
+    </div>
+  </section>
+
+  <section class="sec wrap" id="decisions">
+    <div class="sec__head">
+      <h2 class="split">Three decisions on every <em>leader's agenda.</em></h2>
+      <p class="reveal">Each one answers a question that a minister, a chief executive or an operations chief is asking right now. The first was for a real government client. The program took my work forward.</p>
+    </div>
+  </section>
+
+  <section class="night" id="experience">
+    <svg viewBox="0 0 1440 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><g class="ribbon2" id="ribbon2"></g></svg>
+    <div class="wrap night__grid">
+      <div class="night__main">
+        <div class="label night__label"><span class="night__idx"><i></i>Decision 1</span><span>Public-sector AI</span><span class="night__dot">·</span><span>EY Government Advisory</span></div>
+        <blockquote id="quote">Maharashtra's government wanted to implement AI in its agri-tech program funded by the World Bank: a chatbot to advise farmers. Before spending public money, it needed three answers: <em>will it work, how should it be built, and what will it cost?</em></blockquote>
+        <ul class="night__pts night__intro">
+          <li>The program had built up expert knowledge on crops, farming practices, pests and diseases, but farmers had no easy way to reach it</li>
+          <li>The plan: a generative-AI chatbot that answers farmers' questions from that knowledge</li>
+          <li>I worked on it from January to June 2024, inside the program's Mumbai office, as part of the EY team</li>
+        </ul>
+      </div>
+      <div class="night__side">
+      <img class="night__logo" src="ey-logo.png" alt="EY" onerror="this.remove()">
+      <dl class="night__facts">
+        <dt>Client</dt><dd>Government of Maharashtra, Department of Agriculture</dd>
+        <dt>Program</dt><dd>Project on Climate Resilient Agriculture: a $600 million state program, funded with the World Bank, helping small farmers in drought-hit districts</dd>
+        <dt>My role</dt><dd>Technology Consultant Intern, EY · on site, reporting to the Project Director (IAS)</dd>
+        <dt>Timeline</dt><dd>January to June 2024</dd>
+        <dt>Outcome</dt><dd class="night__out">Set the direction for the farmer chatbot. The program took forward the RAG design and cost model, and has built further versions on that foundation since</dd>
+      </dl>
+      </div>
+    </div>
+    <div class="wrap night__why">
+      <div class="night__whyhead">Three questions, answered</div>
+      <ol>
+        <li><em class="night__q">Will it work?</em>
+          <ul class="night__pts">
+            <li>Built the first prototype: a web app on Microsoft Azure, with support from Microsoft's developers</li>
+            <li>Tested it and found why it would fail at scale:</li>
+            <li class="sub">Its search matched keywords, so it missed the context of a real farmer's question</li>
+            <li class="sub">It stood alone and couldn't plug into the program's existing app</li>
+            <li class="sub">The Azure deployment kept failing with server errors</li>
+          </ul>
+          <strong class="night__res">Version 1 tested, and its limits found</strong></li>
+        <li><em class="night__q">How should it be built?</em>
+          <ul class="night__pts">
+            <li>Initiated a collaboration with a Microsoft technology partner to build it with us</li>
+            <li>Moved to retrieval-augmented generation (RAG): find the right passages in the program's own knowledge, then write the answer from them</li>
+            <li>Designed to follow context, handle open-ended questions and tailor answers to a farmer's crop and location</li>
+          </ul>
+          <strong class="night__res">The design the program took forward</strong></li>
+        <li><em class="night__q">What will it cost?</em>
+          <ul class="night__pts">
+            <li>Modeled a month of real use: 10,000 farmers, five questions a day, about 22 words in and 30 words out</li>
+            <li>Priced every part: server, database, storage, the RAG service and the AI model</li>
+            <li>Total: ₹1.47 lakh a month, about US$1,800</li>
+            <li>About ₹15 per farmer a month, of which the AI model is about ₹5</li>
+          </ul>
+          <strong class="night__res">About ₹15 per farmer a month</strong></li>
+      </ol>
+  </section>
+
+  <section class="wrap grid-sec" id="decisions-grid">
+    <div class="grid" id="grid">
+      <a class="tile" href="decision-2.html" data-seed="11" data-hubs="2">
+        <svg class="mini" viewBox="0 0 400 70" aria-hidden="true"></svg>
+        <span class="tile__idx label label--accent"><i></i>Decision 2</span>
+        <h3>Circular supply chain</h3>
+        <q>Can our returns become revenue instead of waste?</q>
+        <dl><dt class="label">Asked by</dt><dd>Finance chief · Sustainability chief</dd><dt class="label">The work</dt><dd>A refurbishment network for 28,000 returned phones a year</dd></dl>
+        <div class="tile__foot"><div><div class="tile__n">$22 → $141</div><div class="label" style="margin-top:8px;font-weight:400">recovered per phone, modeled</div></div><span class="tile__go">Read the decision <b>→</b></span></div>
+      </a>
+      <a class="tile" href="decision-3.html" data-seed="23" data-hubs="1">
+        <svg class="mini" viewBox="0 0 400 70" aria-hidden="true"></svg>
+        <span class="tile__idx label label--accent"><i></i>Decision 3</span>
+        <h3>Service resilience</h3>
+        <q>Can we keep our delivery promise when demand more than doubles?</q>
+        <dl><dt class="label">Asked by</dt><dd>Operations chief · Customer officer</dd><dt class="label">The work</dt><dd>Peak-day routing and dispatch for a city fulfillment center</dd></dl>
+        <div class="tile__foot"><div><div class="tile__n">3,906 <em>vs</em> 1,600</div><div class="label" style="margin-top:8px;font-weight:400">peak-day packages against fleet capacity</div></div><span class="tile__go">Read the decision <b>→</b></span></div>
+      </a>
+      <a class="tile tile--peek" href="#decisions" id="peek">
+        <div class="peek__text">
+          <span class="tile__idx label label--accent"><i></i>Behind the curtains · In progress</span>
+          <h3>Oklahoma's hidden AI Datacenter water bill</h3>
+          <q>Where should Oklahoma's data-center boom go, if water counts as much as the grid?</q>
+          <p class="peek__body">Gigawatts of data centers are heading to Oklahoma, and no state water permit counts them. Google's Stillwater campus was estimated at about 8.1 million gallons a day at full build-out; the whole city averages about 7 million. I'm mapping every viable grid site, counting both on-site and power-plant water by watershed, and letting an optimizer price the trade-off between grid cost and water stress.</p>
+          <dl><dt class="label">Built with</dt><dd>ArcGIS Pro · Gurobi · public state and federal data</dd><dt class="label">Next</dt><dd>Presenting at OSU GIS Day, October 20, 2026. Results land here after.</dd></dl>
+        </div>
+        <figure class="peek__fig" aria-label="The trade-off curve being tested: grid cost against water stress, with the cheapest, the driest and the best-compromise siting plans">
+          <svg viewBox="0 0 360 260" aria-hidden="true">
+            <line class="ax" x1="40" y1="220" x2="340" y2="220"></line><line class="ax" x1="40" y1="220" x2="40" y2="20"></line>
+            <path class="cv" d="M64 40 C 96 150 150 186 320 202"></path>
+            <circle class="pt" cx="64" cy="40" r="5"></circle><circle class="pt k" cx="101" cy="120" r="7"></circle><circle class="pt" cx="320" cy="202" r="5"></circle>
+            <text x="76" y="38">driest</text><text class="k" x="116" y="112">best compromise</text><text x="318" y="180" text-anchor="end">cheapest</text>
+            <text class="axl" x="340" y="242" text-anchor="end">grid cost →</text><text class="axl" x="30" y="24" text-anchor="end" transform="rotate(-90 30 24)">water stress →</text>
+          </svg>
+          <figcaption>The shape I'm testing, not a result.</figcaption>
+        </figure>
+      </a>
+    </div>
+  </section>
+
+
+  <section class="sec contact wrap" id="contact">
+    <h2 class="split">Let's talk about your hardest <em>operations problem.</em></h2>
+    <div class="contact__row">
+      <p class="reveal">I'm looking for client-facing roles in consulting, supply chain and optimization from June 2027. If you're hiring, or simply curious, I'd value fifteen minutes.</p>
+      <div class="contact__links">
+        <div class="contact__btns"><a class="btn magnet" href="mailto:arnav.chudiwale@okstate.edu" target="_top">Email me</a><a class="btn btn--ghost magnet" href="https://www.linkedin.com/in/arnav-chudiwale/" target="_blank" rel="noopener">LinkedIn</a></div>
+        <a class="contact__mail" href="mailto:arnav.chudiwale@okstate.edu" target="_top">arnav.chudiwale@okstate.edu</a>
+      </div>
+    </div>
+  </section>
+  <div class="landing" id="landing" aria-hidden="true"></div>
+</main>
+
+<footer><div class="wrap"><span>© 2026 Arnav Chudiwale</span><em>Decisions, engineered.</em><span>Available June 2027</span></div></footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/SplitText.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/DrawSVGPlugin.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js"></script>
+<script>
+(() => {
+  const NS = 'http://www.w3.org/2000/svg';
+  const $ = (s, r = document) => r.querySelector(s);
+  // light each gilded word once as it arrives
+  const GILD = '.hero h1 em, .sec__head h2 em, .inside__text h2 em, .contact h2 em, .tile__n em, .note__body p.t--lead em, .hello__word, .night blockquote em, .night__q';
+  const gildIO = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-lit'); gildIO.unobserve(e.target); } }), { rootMargin: '0px 0px -12% 0px' });
+  document.querySelectorAll(GILD).forEach(el => gildIO.observe(el));
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const mk = (tag, attrs, parent) => { const el = document.createElementNS(NS, tag); for (const k in attrs) el.setAttribute(k, attrs[k]); parent.appendChild(el); return el; };
+  function rng(seed){ return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  const f = n => n.toFixed(1);
+
+  // ---- hero figure: the same tangle on every visit ----
+  { const r = rng(7), u = (a, b) => a + (b - a) * r();
+    for (let i = 0; i < 30; i++) mk('path', { d: `M${f(u(-40, 420))} ${f(u(30, 400))} C${f(u(80, 640))} ${f(u(-40, 460))} ${f(u(380, 720))} ${f(u(60, 380))} 760 250` }, $('#tangle'));
+    for (let i = 0; i < 34; i++) mk('circle', { cx: f(u(30, 640)), cy: f(u(40, 390)), r: 2.2 }, $('#nodes'));
+    [-36, -24, -14, -6, 6, 14, 24, 36].forEach(o => mk('path', { d: `M760 ${f(250 + o * .15)} C960 ${f(250 + o * .6 + 60)} 1120 ${f(118 + o)} 1460 ${f(70 + o * 1.15)}` }, $('#ribbon')));
+    for (let k = 0; k < 17; k++) { const y = 230 + k * 10; mk('path', { d: `M-40 ${y} C420 ${y - 190 + k * 4} 980 ${y + 190 - k * 6} 1480 ${y - 60 + k * 3}` }, $('#ribbon2')); }
+  }
+
+  // ---- each decision opens with its own miniature of the figure ----
+  $$('.tile[data-seed]').forEach(t => {
+    const svg = $('.mini', t), r = rng(+t.dataset.seed), u = (a, b) => a + (b - a) * r(), hubs = +t.dataset.hubs;
+    const pts = hubs === 2 ? [[176, 22], [176, 50]] : [[184, 36]];
+    for (let i = 0; i < 14; i++) { const p = pts[i % pts.length]; mk('path', { class: 't', d: `M${f(u(0, 70))} ${f(u(4, 66))} C${f(u(30, 150))} ${f(u(-10, 80))} ${f(u(90, 170))} ${f(u(0, 70))} ${p[0]} ${p[1]}` }, svg); }
+    pts.forEach(p => { [-6, 0, 6].forEach(o => mk('path', { class: 'r', d: `M${p[0]} ${p[1] + o * .2} C260 ${f(p[1] + o + 14)} 320 ${f(18 + o)} 404 ${f(14 + o * 1.2)}` }, svg)); });
+    pts.forEach(p => mk('path', { class: 'o', d: `M${p[0]} ${p[1]} C260 ${p[1] + 14} 320 18 404 14` }, svg));
+    pts.forEach(p => mk('circle', { class: 'c', cx: p[0], cy: p[1], r: 4.5 }, svg));
+  });
+
+  // ---- live local time ----
+  const clock = $('#clock');
+  const tick = () => { try { clock.textContent = new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }).format(new Date()); } catch (e) { clock.textContent = ''; } };
+  tick(); setInterval(tick, 30000);
+  const nav = $('#nav'); const navState = () => nav.classList.toggle('is-solid', window.scrollY > 40);
+  window.addEventListener('scroll', navState, { passive: true }); navState();
+
+  // ---- the thread: the optimal line, continued through the page ----
+  const main = $('main'), thread = $('#thread'), A = $('#threadA'), B = $('#threadB');
+  const tip = $('#tip'), halo = $('#halo'), endRing = $('#endRing'), endDot = $('#endDot');
+  let geo = null;
+  const rel = el => { const r = el.getBoundingClientRect(), m = main.getBoundingClientRect(); return { x: r.left - m.left, y: r.top - m.top, w: r.width, h: r.height }; };
+  const smooth = pts => pts.reduce((d, p, i) => { if (!i) return `M${f(p[0])} ${f(p[1])}`; const q = pts[i - 1], dy = (p[1] - q[1]) * .55; return d + ` C${f(q[0])} ${f(q[1] + dy)} ${f(p[0])} ${f(p[1] - dy)} ${f(p[0])} ${f(p[1])}`; }, '');
+  const lookup = path => { const L = path.getTotalLength(), n = 240, t = []; for (let i = 0; i <= n; i++) { const l = L * i / n; t.push([l, path.getPointAtLength(l).y]); } return { L, t }; };
+  const lenAtY = (lk, y) => { const t = lk.t; if (y <= t[0][1]) return 0; for (let i = 1; i < t.length; i++) if (t[i][1] >= y) { const a = t[i - 1], b = t[i]; return a[0] + (b[0] - a[0]) * ((y - a[1]) / Math.max(1e-6, b[1] - a[1])); } return lk.L; };
+  function layout(){
+    measureMain();
+    const W = main.clientWidth, H = main.scrollHeight, m = Math.max(14, Math.min(40, W * .025));
+    thread.setAttribute('width', W); thread.setAttribute('height', H); thread.setAttribute('viewBox', `0 0 ${W} ${H}`); thread.style.height = H + 'px';
+    const fig = rel($('#fig svg')), cap = rel($('#fig figcaption')), note = rel($('#note .portrait')), noteB = rel($('#note')), head = rel($('#decisions .sec__head')), dec = rel($('#grid')), night = rel($('#experience')), con = rel($('#contact h2')), conB = rel($('#contact')), land = rel($('#landing'));
+    const yExit = fig.y + fig.h * (70 / 420);
+    const gap = (top, bottom) => top + (bottom - top) * .5; // crossings happen only in the air between sections
+    // segment A: hero → the first decision (the night panel)
+    const a = [[W + 2, yExit], [W - m, cap.y - 10], [W - m, cap.y + cap.h + 30], [m, Math.min(note.y - 30, noteB.y + 110)], [m, noteB.y + noteB.h + 20], [W - m, gap(noteB.y + noteB.h + 20, head.y) + 30], [W - m, head.y + head.h + 8], [W * .5, night.y - 2]];
+    // segment B: out of the first decision → the four cards → inside → contact → the final point
+    const b = [[W * .5, night.y + night.h + 2], [W - m, gap(night.y + night.h, dec.y) + 10], [W - m, dec.y + dec.h - 30], [W - m, gap(dec.y + dec.h, con.y) + 30], [W - m, conB.y + conB.h + 24], [W * .5, land.y + land.h * .7]];
+    A.setAttribute('d', smooth(a)); B.setAttribute('d', smooth(b));
+    geo = { a: lookup(A), b: lookup(B), end: b[b.length - 1], nightTop: night.y, nightBot: night.y + night.h };
+    [A, B].forEach((p, i) => { const L = (i ? geo.b : geo.a).L; p.style.strokeDasharray = `${L} ${L}`; });
+    endRing.setAttribute('cx', geo.end[0]); endRing.setAttribute('cy', geo.end[1]); endDot.setAttribute('cx', geo.end[0]); endDot.setAttribute('cy', geo.end[1]);
+  }
+  let drawnY = 0;
+  function paint(targetY, instant){
+    if (!geo) return;
+    if (!instant && Math.abs(targetY - drawnY) < 0.05) return;
+    drawnY = instant ? targetY : drawnY + (targetY - drawnY) * .12;
+    const la = lenAtY(geo.a, drawnY), lb = lenAtY(geo.b, drawnY);
+    A.style.strokeDashoffset = geo.a.L - la; B.style.strokeDashoffset = geo.b.L - lb;
+    const inB = drawnY > geo.nightBot, inNight = drawnY > geo.nightTop && !inB;
+    const done = lb >= geo.b.L - 1;
+    const p = inB ? B.getPointAtLength(lb) : A.getPointAtLength(la);
+    const show = la > 2 && !inNight && !done;
+    tip.setAttribute('cx', p.x); tip.setAttribute('cy', p.y); halo.setAttribute('cx', p.x); halo.setAttribute('cy', p.y);
+    tip.style.opacity = halo.style.opacity = show ? 1 : 0;
+    const e = done ? 1 : 0; endRing.style.opacity = e; endDot.style.opacity = e;
+    endRing.style.transform = endDot.style.transform = `scale(${done ? 1 : .2})`;
+  }
+  endRing.style.transformBox = endDot.style.transformBox = 'fill-box'; endRing.style.transformOrigin = endDot.style.transformOrigin = 'center';
+  endRing.style.transition = endDot.style.transition = 'transform 1.2s cubic-bezier(.22,1,.36,1), opacity .8s';
+  let mainTop = 0, vh = window.innerHeight;
+  const measureMain = () => { mainTop = main.getBoundingClientRect().top + window.scrollY; vh = window.innerHeight; };
+  const targetY = () => window.scrollY + vh * .62 - mainTop;
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const start = () => { layout(); paint(reduce ? 1e9 : targetY(), true); };
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(start); else start();
+  window.addEventListener('resize', () => { layout(); paint(reduce ? 1e9 : targetY(), true); });
+  if ($('#portrait').complete) start(); else $('#portrait').addEventListener('load', start);
+
+  if (!window.gsap || reduce) { window.addEventListener('scroll', () => paint(1e9, true), { passive: true }); return; }
+
+  gsap.registerPlugin(ScrollTrigger, SplitText, DrawSVGPlugin);
+  gsap.defaults({ ease: 'expo.out' });
+  const lenis = new Lenis({ lerp: 0.075, wheelMultiplier: 0.9, smoothWheel: true });
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add(t => { lenis.raf(t * 1000); paint(targetY()); });
+  gsap.ticker.lagSmoothing(0);
+  $$('a[href^="#"]').forEach(a => a.addEventListener('click', e => { const t = $(a.getAttribute('href')); if (t) { e.preventDefault(); lenis.scrollTo(t, { offset: -90, duration: 1.8, easing: x => 1 - Math.pow(1 - x, 4) }); } }));
+  ScrollTrigger.addEventListener('refresh', () => layout());
+
+  document.fonts.ready.then(() => {
+    // intro: words rise, the tangle is drawn, it converges, the optimal line leaves to the right
+    const head = SplitText.create('#headline', { type: 'lines', mask: 'lines', linesClass: 'line' });
+    // the written line is revealed by the pen, not the mask: let its descenders (the g) hang free
+    head.lines.filter(l => $$('em', l).some(e => e.textContent.trim())).forEach(l => { const m = l.parentElement; if (m && m !== $('#headline')) m.style.overflow = 'visible'; });
+    const tPaths = $$('#tangle path'), tNodes = $$('#nodes circle'), rPaths = $$('#ribbon path');
+    const intro = gsap.timeline({ paused: true });
+    intro
+      .from('.nav', { autoAlpha: 0, duration: 1.2 }, 0)
+      .from(head.lines.filter(l => !$$('em', l).some(e => e.textContent.trim())), { yPercent: 105, duration: 1.5, stagger: 0.12 }, 0.1)
+      .from('[data-intro="rise"]', { autoAlpha: 0, y: 24, duration: 1.3, stagger: 0.12 }, 0.6)
+      .from(tPaths, { drawSVG: 0, duration: 2.9, ease: 'power1.inOut', stagger: { each: 0.075, from: 'random' } }, 0.35)
+      .from(tNodes, { scale: 0, transformOrigin: '50% 50%', duration: 1.3, ease: 'power3.out', stagger: { each: 0.04, from: 'random' } }, 0.6)
+      .from(['#conv-ring', '#conv-dot'], { scale: 0, transformOrigin: '50% 50%', duration: 1.4 }, 3.3)
+      .from(rPaths, { drawSVG: 0, duration: 2.6, ease: 'power2.inOut', stagger: 0.12 }, 3.7)
+      .from('#optimal', { drawSVG: 0, duration: 3.2, ease: 'power2.inOut' }, 4.0)
+      .from('#fig-labels text', { autoAlpha: 0, y: 6, duration: 1.4, stagger: 2.4 }, 1.2)
+      .from('#thread', { autoAlpha: 0, duration: 1.4 }, 6.2);
+    // "engineered." is written once: the pen moves letter by letter, easing into each stroke, and the ink appears exactly where the pen is
+    (() => {
+      const em = $$('#headline em').find(e => e.textContent.trim()), host = $('.hero__main'), nib = document.createElement('i');
+      nib.className = 'hero__nib'; nib.setAttribute('aria-hidden', 'true'); host.appendChild(nib);
+      const text = em.firstChild, N = em.textContent.length;
+      const D = ((0.5 + em.textContent.trim().length * 0.2) / 1.38) * 1.45;
+      let edges = [], top = 0, emLeft = 0, emW = 0, lead = 0, amp = 0;
+      const measure = () => {
+        const h = host.getBoundingClientRect(), r = em.getBoundingClientRect(), range = document.createRange();
+        emLeft = r.left; emW = r.width; top = r.top - h.top + r.height * 0.58; lead = r.height * 0.015; amp = r.height * 0.045;
+        edges = [r.left];
+        for (let k = 0; k < N; k++) { range.setStart(text, k); range.setEnd(text, k + 1); edges.push(range.getBoundingClientRect().right); }
+        edges = edges.map(x => x - h.left);
+        emLeft -= h.left;
+      };
+      const pen = { x: 0 };
+      // one continuous stroke: the hand never stops between letters; the nib rises and falls once per letter
+      const draw = () => {
+        if (!edges.length) return;
+        const x = pen.x;
+        let i = 0; while (i < N - 1 && x > edges[i + 1]) i++;
+        const f = Math.min(1, Math.max(0, (x - edges[i]) / Math.max(1, edges[i + 1] - edges[i])));
+        em.style.clipPath = `inset(-25% ${Math.max(-0.06 * emW, emW - (x - emLeft) - lead).toFixed(2)}px -35% -4%)`;
+        nib.style.transform = `translate3d(${x.toFixed(2)}px, ${(-amp * Math.sin(2 * Math.PI * f)).toFixed(2)}px, 0)`;
+      };
+      intro
+        .call(() => { measure(); nib.style.top = top + 'px'; pen.x = edges[0]; draw(); }, null, 0.55)
+        .set(em, { clipPath: 'inset(-25% 100% -35% -4%)' }, 0)
+        .to(pen, { x: () => edges[N], duration: D, ease: 'sine.inOut', onUpdate: draw }, 0.6)
+        .fromTo(nib, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.25, ease: 'none', immediateRender: false }, 0.6)
+        .to(nib, { autoAlpha: 0, duration: 0.4, ease: 'none' }, 0.6 + D - 0.15)
+        .set(em, { clipPath: 'inset(-25% -6% -35% -4%)' }, 0.6 + D + 0.02);
+    })();
+    intro.play();
+
+    // leaving the hero: the tangle is absorbed into the optimum
+    gsap.timeline({ scrollTrigger: { trigger: '#fig', start: 'top 45%', end: 'bottom top', scrub: 1.4 } })
+      .to(tPaths, { drawSVG: '100% 100%', ease: 'none', stagger: { each: 0.01, from: 'random' } }, 0)
+      .to(tNodes, { opacity: 0, scale: 0.4, transformOrigin: '50% 50%', ease: 'none', stagger: { each: 0.005, from: 'random' } }, 0);
+
+    const onArrive = (targets, build, startAt = 'top 92%') => $$(targets).forEach(el => ScrollTrigger.create({ trigger: el, start: startAt, once: true, onEnter: () => build(el) }));
+    onArrive('.reveal:not(.night .reveal)', el => gsap.fromTo(el, { autoAlpha: 0, y: 26 }, { autoAlpha: 1, y: 0, duration: 1.4 }));
+    onArrive('.split', el => { const s = SplitText.create(el, { type: 'lines', mask: 'lines', linesClass: 'line' }); gsap.fromTo(s.lines, { yPercent: 105 }, { yPercent: 0, duration: 1.4, stagger: 0.1 }); });
+
+    // each card resolves its own miniature: tangle → point → line
+    const resolve = (t, delay = 0) => {
+      const tl = gsap.timeline({ delay });
+      tl.fromTo($$('.t', t), { drawSVG: 0 }, { drawSVG: '100%', duration: 1.1, ease: 'power2.inOut', stagger: { each: 0.03, from: 'random' } }, 0)
+        .fromTo($$('.c', t), { scale: 0, transformOrigin: '50% 50%' }, { scale: 1, duration: 0.9 }, 0.8)
+        .fromTo($$('.r', t), { drawSVG: 0 }, { drawSVG: '100%', duration: 1.1, ease: 'power3.inOut', stagger: 0.04 }, 0.9)
+        .fromTo($$('.o', t), { drawSVG: 0 }, { drawSVG: '100%', duration: 1.3, ease: 'power3.inOut' }, 1.0)
+        .to($$('.t', t), { drawSVG: '100% 100%', duration: 1.2, ease: 'power2.inOut', stagger: { each: 0.02, from: 'random' } }, 1.6);
+      return tl;
+    };
+    ScrollTrigger.create({ trigger: '#grid', start: 'top 85%', once: true, onEnter: () => {
+      gsap.fromTo('.tile', { autoAlpha: 0, y: 48 }, { autoAlpha: 1, y: 0, duration: 1.5, stagger: 0.12 });
+      $$('.tile[data-seed]').forEach((t, i) => resolve(t, 0.3 + i * 0.15));
+    } });
+    $$('.tile[data-seed]').forEach(t => { let busy = false; t.addEventListener('mouseenter', () => { if (busy) return; busy = true; resolve(t).eventCallback('onComplete', () => { busy = false; }); }); });
+
+
+    // portrait drifts; the signature is written
+    gsap.fromTo('#portrait', { yPercent: -2.5 }, { yPercent: 2.5, ease: 'none', scrollTrigger: { trigger: '.portrait__frame', start: 'top bottom', end: 'bottom top', scrub: true } });
+    // hello, written in place, in the languages of the rooms I want to work in
+    (() => {
+      const hel = $('#hello'), w = $('.hello__word', hel), nib = $('.hello__nib', hel);
+      const words = [['Hello', 'en', 'ltr'], ['नमस्ते', 'hi', 'ltr'], ['مرحبا', 'ar', 'rtl'], ['Guten Tag', 'de', 'ltr'], ['Bonjour', 'fr', 'ltr'], ['Goedendag', 'nl', 'ltr']];
+      const SHOWN = 'inset(-40% -6% -50% -6%)';
+      let current = null, visible = false, started = false;
+      if (document.fonts) { document.fonts.load('italic 60px "Tiro Devanagari Hindi"', 'नमस्ते').catch(() => {}); document.fonts.load('italic 60px "Amiri"', 'مرحبا').catch(() => {}); }
+      const write = i => {
+        const [text, lang, dir] = words[i], rtl = dir === 'rtl';
+        w.textContent = text; w.lang = lang; w.dir = dir;
+        w.classList.remove('is-lit'); void w.offsetWidth; w.classList.add('is-lit');
+        const width = w.offsetWidth;
+        gsap.set(w, { clipPath: rtl ? 'inset(-40% 0% -50% 100%)' : 'inset(-40% 100% -50% 0%)', autoAlpha: 1, y: 0 });
+        gsap.set(nib, { x: rtl ? width : 0, yPercent: 0, opacity: 0 });
+        const dur = 0.5 + text.length * 0.2;
+        current = gsap.timeline({ onComplete: () => write((i + 1) % words.length) })
+          .to(nib, { opacity: 1, duration: 0.15, ease: 'none' }, 0)
+          .to(w, { clipPath: SHOWN, duration: dur, ease: 'power1.inOut' }, 0)
+          .to(nib, { x: rtl ? 0 : width, duration: dur, ease: 'power1.inOut' }, 0)
+          .to(nib, { yPercent: -220, duration: dur / 10, ease: 'sine.inOut', repeat: 9, yoyo: true }, 0)
+          .to(nib, { opacity: 0, duration: 0.3, ease: 'none' }, dur - 0.1)
+          .to(w, { autoAlpha: 0, y: -8, duration: 0.6, ease: 'power2.in' }, dur + 1.7);
+        current.timeScale(1.38);
+        if (!visible) current.pause();
+      };
+      new IntersectionObserver(([e]) => {
+        visible = e.isIntersecting;
+        if (visible && !started) { started = true; write(0); }
+        else if (current) visible ? current.resume() : current.pause();
+      }).observe(hel);
+    })();
+
+    // the full name is written as you scroll: ink follows a nib, then one flourish underlines it
+    (() => {
+      const sig = $('#signature'), ink = $('.signature__ink', sig), nib = $('.signature__nib', sig), fl = $('.signature__flourish path', sig);
+      gsap.set(ink, { clipPath: 'inset(-30% 100% -40% -5%)' });
+      gsap.set(fl, { drawSVG: 0 });
+      gsap.timeline({ scrollTrigger: { trigger: sig, start: 'top 96%', end: 'top 48%', scrub: 1.1 } })
+        .to(nib, { opacity: 1, duration: 0.04, ease: 'none' }, 0)
+        .to(ink, { clipPath: 'inset(-30% 0% -40% -5%)', duration: 1, ease: 'none' }, 0)
+        .fromTo(nib, { left: '0%' }, { left: '96%', duration: 1, ease: 'none' }, 0)
+        .to(nib, { yPercent: -260, duration: 0.0625, ease: 'sine.inOut', repeat: 15, yoyo: true }, 0)
+        .to(fl, { drawSVG: '100%', duration: 0.45, ease: 'power2.inOut' }, 0.95)
+        .to(nib, { opacity: 0, duration: 0.15, ease: 'none' }, 1.05);
+    })();
+
+    // the sneak peek: its trade-off curve sketches itself
+    gsap.fromTo('.peek__fig .cv', { drawSVG: 0 }, { drawSVG: '100%', ease: 'power2.inOut', scrollTrigger: { trigger: '#peek', start: 'top 85%', end: 'top 35%', scrub: 1.2 } });
+    gsap.fromTo('.peek__fig .pt, .peek__fig text:not(.axl)', { autoAlpha: 0 }, { autoAlpha: 1, stagger: 0.15, scrollTrigger: { trigger: '#peek', start: 'top 70%', end: 'top 35%', scrub: 1.2 } });
+    // night band: the thread arrives and fans out into the ribbon
+    const rib2 = $$('#ribbon2 path');
+    // everything in the night band is tied to the scroll: slower, fuller, and it rewinds when you scroll back up
+    const sc = (trigger, start, end) => ({ trigger, start, end, scrub: 1.4 });
+    gsap.timeline({ scrollTrigger: sc('.night', 'top 92%', 'top 10%') })
+      .fromTo(rib2, { drawSVG: '50% 50%', strokeOpacity: 0 }, { drawSVG: '0% 100%', strokeOpacity: 0.12, ease: 'power2.inOut', stagger: { each: 0.06, from: 'center' } });
+    gsap.fromTo('#ribbon2', { xPercent: -7, yPercent: 4 }, { xPercent: 7, yPercent: -4, ease: 'none', scrollTrigger: { trigger: '.night', start: 'top bottom', end: 'bottom top', scrub: 1 } });
+    gsap.fromTo('.night__label', { autoAlpha: 0, x: -24 }, { autoAlpha: 1, x: 0, ease: 'power2.out', scrollTrigger: sc('.night__label', 'top 92%', 'top 70%') });
+    const qWords = SplitText.create('#quote', { type: 'words' }).words;
+    gsap.fromTo(qWords, { opacity: 0.06, yPercent: 40, filter: 'blur(6px)' }, { opacity: 1, yPercent: 0, filter: 'blur(0px)', ease: 'power2.out', stagger: 0.14, scrollTrigger: sc('#quote', 'top 88%', 'bottom 42%') });
+    gsap.fromTo('.night__intro li', { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, ease: 'power2.out', stagger: 0.25, scrollTrigger: sc('.night__intro', 'top 92%', 'bottom 62%') });
+    gsap.timeline({ scrollTrigger: sc('.night__side', 'top 88%', 'bottom 55%') })
+      .fromTo('.night__logo', { autoAlpha: 0, y: 24 }, { autoAlpha: 0.82, y: 0, ease: 'power2.out' })
+      .fromTo('.night__facts dt, .night__facts dd', { autoAlpha: 0, x: 22 }, { autoAlpha: 1, x: 0, ease: 'power2.out', stagger: 0.1 }, '<0.2');
+    gsap.timeline({ scrollTrigger: sc('.night__why', 'top 88%', 'bottom 72%') })
+      .fromTo('.night__whyhead', { autoAlpha: 0, y: 18 }, { autoAlpha: 1, y: 0, ease: 'power2.out' })
+      .fromTo('.night__why ol > li', { autoAlpha: 0, y: 60 }, { autoAlpha: 1, y: 0, ease: 'power2.out', stagger: 0.3 }, '<0.15')
+      .fromTo('.night__why .night__pts li', { autoAlpha: 0, x: -14 }, { autoAlpha: 1, x: 0, ease: 'power2.out', stagger: 0.08 }, '<0.2')
+      .fromTo('.night__res', { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, ease: 'power2.out', stagger: 0.3 }, '<0.5');
+
+    // buttons lean toward the cursor, by a few pixels
+    if (window.matchMedia('(pointer: fine)').matches) $$('.magnet').forEach(b => {
+      const x = gsap.quickTo(b, 'x', { duration: 0.8, ease: 'expo.out' }), y = gsap.quickTo(b, 'y', { duration: 0.8, ease: 'expo.out' });
+      b.addEventListener('mousemove', e => { const rc = b.getBoundingClientRect(); x((e.clientX - rc.left - rc.width / 2) * 0.18); y((e.clientY - rc.top - rc.height / 2) * 0.28); });
+      b.addEventListener('mouseleave', () => { x(0); y(0); });
+    });
+    ScrollTrigger.refresh();
+  });
+})();
+</script>
+</body>
+</html>

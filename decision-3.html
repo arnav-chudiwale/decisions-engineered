@@ -1,0 +1,786 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Service resilience · Arnav Chudiwale</title>
+<meta name="description" content="Can a delivery fleet keep its promise when demand more than doubles? Overtime, a partner contract and wave dispatch, priced per package.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,300..700;1,300..700&family=Instrument+Serif:ital@0;1&family=Mrs+Saint+Delafield&display=swap">
+<style>
+/* Decision 2. One grammar, three chapters: many returned phones are sorted into value (feasible), many networks narrow to one (optimal), one business case is stress-tested (engineered). */
+:root{
+  --ivory:#F4EFE6; --sand:#E9E0D0; --ink:#16171B; --night:#0F1114;
+  --bronze:#8A6427; --champagne:#D8B26A; --graphite:#5B564D; --stone:#8C8579; --body:#2B2A27;
+  --rule:rgba(22,23,27,.14); --mist:#D9D3C7;
+  --voice:'Hanken Grotesk','Helvetica Neue',Arial,sans-serif;
+  --grace:'Instrument Serif','Times New Roman',Georgia,serif;
+  --hand:'Mrs Saint Delafield','Snell Roundhand',cursive;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --gutter:clamp(20px,5vw,72px);
+  --gild-day:linear-gradient(100deg,#7A561F 0%,#A47A33 13%,#87622A 27%,#9D7431 40%,#E4BC68 50%,#9D7431 60%,#87622A 73%,#A47A33 87%,#7A561F 100%);
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+body{margin:0;background:var(--ivory);color:var(--ink);font-family:var(--voice);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:1px solid var(--bronze);outline-offset:4px}
+em{font-family:var(--grace);font-style:italic;font-weight:400;letter-spacing:-.01em}
+.wrap{max-width:1280px;margin:0 auto;padding-inline:var(--gutter);position:relative}
+.label{font-size:14px;font-weight:500;color:var(--graphite)}
+.gold{color:var(--bronze)}
+.gild{background-image:var(--gild-day);background-size:260% 100%;background-position:100% 50%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.gild.is-lit{animation:sweep 2.4s cubic-bezier(.45,0,.2,1) .2s both}
+@keyframes sweep{from{background-position:100% 50%}to{background-position:0% 50%}}
+h1,h2,h3{font-weight:500;margin:0;text-wrap:balance}
+
+/* nav */
+.nav{position:fixed;top:0;left:0;right:0;z-index:20;background:rgba(244,239,230,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--rule)}
+.nav__in{display:flex;flex-wrap:wrap;gap:10px 28px;align-items:center;justify-content:space-between;padding-block:20px}
+.brand{font-size:16px;font-weight:500;letter-spacing:-.02em;text-decoration:none}
+.nav ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:24px;font-size:15px;font-weight:500}
+.nav ul a{text-decoration:none}
+.nav ul a:hover{color:var(--bronze)}
+
+/* chapter rail */
+.rail{position:fixed;left:clamp(14px,2vw,30px);top:50%;transform:translateY(-50%);z-index:15;display:none}
+@media (min-width:1400px){.rail{display:block}}
+.rail ol{list-style:none;margin:0;padding:0;position:relative}
+.rail ol::before{content:"";position:absolute;left:5px;top:6px;bottom:6px;width:1px;background:var(--rule)}
+.rail__fill{position:absolute;left:5px;top:22px;width:1px;height:0;max-height:calc(100% - 44px);background:var(--bronze);z-index:1}
+.rail li{position:relative;display:flex;align-items:center;gap:12px;padding:16px 0}
+.rail li i{width:11px;height:11px;border-radius:50%;border:1px solid var(--stone);background:var(--ivory);transition:all .6s var(--ease);flex:none;position:relative;z-index:1}
+.rail li span{font-family:var(--grace);font-style:italic;font-size:17px;color:var(--stone);opacity:0;transform:translateX(-6px);transition:all .6s var(--ease)}
+.rail li.on i{border-color:var(--bronze);background:var(--bronze)}
+.rail li.on span{opacity:1;transform:none;color:var(--bronze)}
+.rail:hover li span{opacity:1;transform:none}
+
+/* hero */
+.hero{padding-top:150px}
+.crumb{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:15px;font-weight:500;color:var(--bronze)}
+.crumb i{display:block;width:28px;height:1px;background:var(--bronze)}
+.crumb a{text-decoration:none;color:var(--graphite)}
+.crumb a:hover{color:var(--bronze)}
+.hero h1{margin-top:26px;font-size:clamp(46px,7.4vw,112px);line-height:.98;letter-spacing:-.05em;max-width:13.5em}
+.memo{margin-top:56px;display:grid;grid-template-columns:minmax(0,1.25fr) repeat(3,minmax(0,1fr));border-top:1px solid var(--ink)}
+@media (max-width:980px){.memo{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.memo__a{grid-column:1/-1}}
+@media (max-width:560px){.memo{grid-template-columns:minmax(0,1fr)}}
+.memo > div{padding:22px 28px 26px 0;border-bottom:1px solid var(--rule)}
+.memo > div + div{padding-left:28px;border-left:1px solid var(--rule)}
+@media (max-width:980px){.memo > div + div{border-left:0;padding-left:0}.memo > div:nth-child(3),.memo > div:nth-child(4){padding-left:28px;border-left:1px solid var(--rule)}.memo > div:nth-child(2){padding-left:0;border-left:0}}
+@media (max-width:560px){.memo > div:nth-child(n){padding-left:0;border-left:0}}
+.memo .label{display:block;margin-bottom:10px}
+.memo__a p{margin:0;font-size:clamp(19px,1.6vw,22px);line-height:1.45;font-weight:400;letter-spacing:-.01em}
+.stat{font-size:clamp(32px,3.1vw,46px);line-height:1;letter-spacing:-.04em;font-weight:400;white-space:nowrap}
+.stat em{font-size:1.05em}
+.stat + span{display:block;margin-top:10px;font-size:15px;color:var(--graphite);line-height:1.45}
+.meta{margin-top:18px;font-size:14px;color:var(--graphite)}
+
+/* the sieve */
+.sieve{margin:72px 0 0;position:relative}
+.sieve canvas{display:block;width:100%;height:340px;background:transparent}
+@media (max-width:700px){.sieve canvas{height:300px}}
+.sieve__top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px 24px;padding-bottom:14px;border-bottom:1px solid var(--rule)}
+.sieve__top .label em{font-size:17px;color:var(--ink)}
+.sieve__count{display:flex;align-items:baseline;gap:12px}
+.sieve__count b{font-weight:400;font-size:clamp(40px,4vw,56px);letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.sieve__count span{font-size:15px;color:var(--graphite)}
+.sieve figcaption{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px 24px;padding-top:12px;font-size:14px;color:var(--graphite)}
+.sieve figcaption em{font-size:17px;color:var(--ink)}
+.ghost{font:inherit;font-size:15px;font-weight:500;background:none;border:0;border-bottom:1px solid var(--ink);padding:0 0 4px;cursor:pointer;color:var(--ink)}
+
+/* chapters */
+.ch{padding-top:150px}
+.ch__head{display:flex;flex-wrap:wrap;gap:24px 64px;align-items:flex-end;justify-content:space-between}
+.ch__no{font-family:var(--grace);font-style:italic;font-size:clamp(20px,1.8vw,24px);color:var(--bronze);display:flex;align-items:center;gap:14px}
+.ch__no i{display:block;width:28px;height:1px;background:var(--bronze)}
+.ch h2{margin-top:18px;font-size:clamp(38px,5vw,72px);line-height:1;letter-spacing:-.045em;max-width:14em}
+.ch h2 em{color:var(--bronze)}
+.ch__lede{flex:0 1 420px;margin:0;font-weight:300;color:var(--body);font-size:18px}
+
+.split{margin-top:64px;display:flex;flex-wrap:wrap;gap:48px 72px;align-items:flex-start}
+.split__text{flex:1 1 380px;min-width:0}
+.split__fig{flex:1 1 460px;min-width:0;margin:0}
+.pts{list-style:none;margin:0;padding:0;display:grid;gap:16px}
+.pts li{position:relative;padding-left:24px;font-size:18px;line-height:1.55;font-weight:300;color:var(--body)}
+.pts li::before{content:"";position:absolute;left:0;top:.8em;width:12px;height:1px;background:var(--bronze)}
+.pts b{font-weight:500;color:var(--ink)}
+.facts{margin-top:40px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.facts div{background:var(--ivory);padding:18px 20px}
+.facts b{display:block;font-weight:400;font-size:32px;letter-spacing:-.035em;line-height:1.05}
+.facts span{display:block;margin-top:6px;font-size:14px;color:var(--graphite);line-height:1.4}
+
+/* map */
+.map svg{display:block;width:100%;height:auto;overflow:visible}
+.map .link{fill:none;stroke:var(--ink);stroke-opacity:.25;stroke-width:.8}
+.map .link.best{stroke:var(--bronze);stroke-opacity:.7;stroke-width:.9}
+.map .store{fill:var(--ink)}
+.map .site{fill:var(--ivory);stroke:var(--stone);stroke-width:1;stroke-dasharray:2 3;transition:all .5s var(--ease)}
+.map .site.open{stroke:var(--bronze);stroke-width:1.8;stroke-dasharray:none;fill:var(--ivory)}
+.map .site.open + .site__dot{opacity:1}
+.map .site__dot{fill:var(--bronze);opacity:0;transition:opacity .5s}
+.map text{font-family:var(--grace);font-style:italic;font-size:15px;fill:var(--graphite)}
+.map text.on{fill:var(--bronze)}
+.map figcaption{margin-top:10px;font-size:14px;color:var(--graphite);display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 20px}
+.counter{display:flex;align-items:baseline;gap:12px;margin-top:36px}
+.counter b{font-size:56px;font-weight:300;letter-spacing:-.045em;line-height:1;font-variant-numeric:tabular-nums;min-width:1.4ch}
+.counter span{font-size:16px;color:var(--graphite)}
+
+/* the switch */
+.switch{display:inline-flex;border:1px solid var(--ink);margin-top:8px}
+.switch button{font:inherit;font-size:15px;font-weight:500;background:var(--ivory);color:var(--ink);border:0;padding:12px 18px;cursor:pointer;transition:background .5s var(--ease),color .5s var(--ease)}
+.switch button[aria-pressed="true"]{background:var(--ink);color:var(--ivory)}
+.modes{margin-top:28px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.modes > div{background:var(--ivory);padding:18px 20px;transition:background .6s var(--ease)}
+.modes > div.on{background:var(--sand)}
+.modes .label{display:block}
+.modes b{display:block;margin-top:8px;font-weight:400;font-size:24px;letter-spacing:-.025em;line-height:1.2}
+.modes dl{margin:12px 0 0;display:grid;grid-template-columns:auto auto;justify-content:start;gap:4px 14px;font-size:15px}
+.modes dt{color:var(--graphite)}
+.modes dd{margin:0;font-variant-numeric:tabular-nums}
+.verdict{margin-top:26px;font-family:var(--grace);font-style:italic;font-size:clamp(24px,2.2vw,30px);line-height:1.25;color:var(--ink)}
+.verdict b{font-family:var(--voice);font-style:normal;font-weight:500;letter-spacing:-.02em}
+
+/* cost bars */
+.bars{margin-top:110px}
+.bars h3{font-size:clamp(28px,3vw,40px);letter-spacing:-.035em;line-height:1.1;max-width:20em}
+.bars h3 em{color:var(--bronze)}
+.bar{margin-top:30px}
+.bar__row{display:flex;justify-content:space-between;gap:12px;font-size:15px;color:var(--graphite)}
+.bar__row b{font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums}
+.bar__track{margin-top:8px;height:34px;position:relative}
+.bar__fill{position:absolute;left:0;top:0;bottom:0;background:var(--ink);transform-origin:left;width:100%}
+.bar__fill.thin{width:2px;background:var(--bronze)}
+.bar__note{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-family:var(--grace);font-style:italic;font-size:19px;color:var(--bronze);white-space:nowrap}
+
+/* grades */
+.grades{margin-top:110px;display:flex;flex-wrap:wrap;gap:40px 72px;align-items:flex-end}
+.grades__text{flex:1 1 360px}
+.grades__text h3{font-size:clamp(28px,3vw,40px);letter-spacing:-.035em;line-height:1.1}
+.grades__text h3 em{color:var(--bronze)}
+.grades__text p{margin:18px 0 0;font-weight:300;color:var(--body);font-size:18px;max-width:30em}
+.mix{flex:1 1 520px;min-width:0}
+.mix__bar{display:flex;height:64px;gap:3px}
+.mix__bar div{position:relative;display:flex;align-items:flex-end;padding:0 0 10px 12px;color:var(--ivory);font-size:15px;font-weight:500;transform-origin:left}
+.mix__a{flex:25;background:#A47A33}.mix__b{flex:45;background:var(--bronze)}.mix__c{flex:30;background:var(--stone)}
+.mix__legend{margin-top:16px;display:grid;grid-template-columns:25fr 45fr 30fr;gap:3px;font-size:14px;color:var(--graphite);line-height:1.4}
+.mix__legend b{display:block;color:var(--ink);font-weight:500}
+@media (max-width:560px){.mix__legend{grid-template-columns:1fr}}
+.compare{margin-top:34px;display:flex;align-items:baseline;gap:22px;flex-wrap:wrap}
+.compare s{font-size:clamp(34px,3.2vw,46px);color:var(--stone);text-decoration-thickness:1px;letter-spacing:-.03em}
+.compare b{font-weight:400;font-size:clamp(56px,6vw,88px);letter-spacing:-.05em;line-height:1}
+.compare span{font-size:15px;color:var(--graphite)}
+
+/* engineered: the lab */
+.lab{margin-top:64px;display:flex;flex-wrap:wrap;gap:48px 72px;align-items:stretch}
+.lab__controls{flex:1 1 360px;min-width:0;display:flex;flex-direction:column;gap:30px}
+.ctl label{display:flex;justify-content:space-between;gap:12px;font-size:16px;font-weight:500}
+.ctl label output{font-variant-numeric:tabular-nums;color:var(--bronze)}
+.ctl input[type=range]{width:100%;margin-top:14px;-webkit-appearance:none;appearance:none;height:28px;background:transparent;cursor:pointer}
+.ctl input[type=range]::-webkit-slider-runnable-track{height:1px;background:var(--ink)}
+.ctl input[type=range]::-moz-range-track{height:1px;background:var(--ink)}
+.ctl input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--ivory);border:1.5px solid var(--bronze);margin-top:-9px}
+.ctl input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--ivory);border:1.5px solid var(--bronze)}
+.ctl small{display:block;margin-top:6px;font-size:14px;color:var(--graphite);line-height:1.45}
+.reset{align-self:flex-start;position:relative;z-index:2}
+.reset:disabled{color:var(--stone);border-color:var(--rule);cursor:default}
+.lab__out{flex:1 1 480px;min-width:0;background:var(--night);color:var(--ivory);padding:clamp(24px,3vw,40px)}
+.lab__out .label{color:var(--champagne)}
+.npv{margin-top:10px;font-size:clamp(56px,6.5vw,96px);font-weight:400;letter-spacing:-.05em;line-height:1;font-variant-numeric:tabular-nums}
+.npv.neg{color:#C98F7A}
+.lab__sub b.warn{color:#C98F7A}
+.lab__sub{margin-top:12px;display:flex;flex-wrap:wrap;gap:6px 26px;font-size:15px;color:var(--mist)}
+.lab__sub b{font-weight:500;color:var(--ivory);font-variant-numeric:tabular-nums}
+.lab__verdict{margin-top:18px;font-family:var(--grace);font-style:italic;font-size:22px;color:var(--champagne);min-height:1.4em}
+.curve{margin-top:22px}
+.curve svg{display:block;width:100%;height:auto;overflow:visible}
+.curve .axis{stroke:var(--mist);stroke-opacity:.35;stroke-width:1}
+.curve .zero{stroke:var(--mist);stroke-opacity:.6;stroke-dasharray:3 4}
+.curve .line{fill:none;stroke:var(--champagne);stroke-width:2}
+.curve .be{stroke:#C98F7A;stroke-width:1;stroke-dasharray:2 3}
+.curve circle{fill:var(--night);stroke:var(--champagne);stroke-width:1.6}
+.curve text{font-size:12px;fill:var(--mist)}
+.curve text.k{font-family:var(--grace);font-style:italic;font-size:15px;fill:var(--champagne)}
+.curve text.r{fill:#C98F7A;font-family:var(--grace);font-style:italic;font-size:15px}
+
+.scen{margin-top:64px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+@media (max-width:760px){.scen{grid-template-columns:minmax(0,1fr)}}
+.scen > div{background:var(--ivory);padding:22px 24px}
+.scen > div.base{background:var(--sand)}
+.scen b{display:block;margin-top:8px;font-weight:400;font-size:40px;letter-spacing:-.04em;line-height:1}
+.scen p{margin:10px 0 0;font-size:15px;color:var(--graphite);line-height:1.45}
+
+.tornado{margin-top:96px}
+.tornado h3{font-size:clamp(28px,3vw,40px);letter-spacing:-.035em;line-height:1.1;max-width:22em}
+.tornado h3 em{color:var(--bronze)}
+.tor{margin-top:32px;display:grid;gap:14px}
+.tor__row{display:grid;grid-template-columns:150px minmax(0,1fr) 110px;gap:16px;align-items:center;font-size:15px}
+@media (max-width:620px){.tor__row{grid-template-columns:96px minmax(0,1fr) 84px;font-size:14px}}
+.tor__track{position:relative;height:22px}
+.tor__track::before{content:"";position:absolute;left:50%;top:-6px;bottom:-6px;width:1px;background:var(--ink);opacity:.4}
+.tor__lo,.tor__hi{position:absolute;top:0;bottom:0;transform-origin:center}
+.tor__lo{right:50%;background:var(--stone)}
+.tor__hi{left:50%;background:var(--bronze)}
+.tor__val{font-variant-numeric:tabular-nums;color:var(--graphite);text-align:right}
+.tor__legend{margin-top:16px;display:flex;flex-wrap:wrap;gap:8px 24px;font-size:14px;color:var(--graphite)}
+.tor__legend i{display:inline-block;width:12px;height:12px;margin-right:8px;vertical-align:-1px}
+
+/* memo card */
+.letter{margin-top:150px;display:flex;justify-content:center}
+.card{width:100%;max-width:820px;background:var(--sand);padding:clamp(28px,5vw,64px);position:relative;box-shadow:0 30px 60px -40px rgba(22,23,27,.35)}
+.card::before{content:"";position:absolute;inset:12px;border:1px solid rgba(138,100,39,.35);pointer-events:none}
+.card__hd{display:grid;grid-template-columns:72px minmax(0,1fr);gap:6px 14px;font-size:15px;padding-bottom:20px;border-bottom:1px solid var(--rule)}
+.card__hd dt{color:var(--graphite)}
+.card__hd dd{margin:0;font-weight:500}
+.card h3{margin-top:26px;font-size:clamp(28px,3vw,38px);letter-spacing:-.035em;line-height:1.1}
+.card h3 em{color:var(--bronze)}
+.card ol{margin:22px 0 0;padding-left:1.3em;display:grid;gap:12px;font-size:18px;font-weight:300;color:var(--body)}
+.card ol b{font-weight:500;color:var(--ink)}
+.card ol li::marker{font-family:var(--grace);font-style:italic;color:var(--bronze)}
+.sig{margin-top:30px;font-family:var(--hand);font-size:clamp(48px,6vw,68px);line-height:.9;color:var(--ink)}
+
+/* limits + appendix */
+.limits{margin-top:120px;display:flex;flex-wrap:wrap;gap:40px 72px}
+.limits > div{flex:1 1 420px;min-width:0}
+.limits h3{font-size:clamp(26px,2.6vw,34px);letter-spacing:-.03em;line-height:1.1}
+.limits h3 em{color:var(--bronze)}
+details{margin-top:22px;border-top:1px solid var(--ink);border-bottom:1px solid var(--rule)}
+summary{list-style:none;cursor:pointer;padding:18px 0;display:flex;justify-content:space-between;gap:12px;font-size:17px;font-weight:500}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-family:var(--grace);font-size:26px;line-height:.8;color:var(--bronze);transition:transform .5s var(--ease)}
+details[open] summary::after{transform:rotate(45deg)}
+.tech{padding-bottom:24px;font-size:16px;font-weight:300;color:var(--body)}
+.tech p{margin:0 0 14px}
+.tech b{font-weight:500;color:var(--ink)}
+.math{font-family:var(--grace);font-style:italic;font-size:19px;color:var(--ink);background:rgba(233,224,208,.6);padding:16px 18px;margin:0 0 16px;line-height:1.7}
+
+.defs{margin:0 0 18px;display:grid;grid-template-columns:72px minmax(0,1fr);gap:12px 16px;font-size:15px;line-height:1.6}
+.defs dt{font-weight:500;color:var(--bronze)}
+.defs dd{margin:0}
+.defs i,.tech i{font-family:var(--grace);font-size:1.12em}
+.math .lbl{display:block;font-family:var(--voice);font-style:normal;font-size:13px;font-weight:500;color:var(--bronze);margin:10px 0 2px}
+.math .lbl:first-child{margin-top:0}
+.math .why{font-family:var(--voice);font-style:normal;font-size:13px;color:var(--graphite);margin-left:6px}
+
+.math{white-space:normal}
+/* next */
+.next{margin-top:150px;border-top:1px solid var(--ink)}
+.next a{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:20px;padding:40px 0 30px;text-decoration:none}
+.next .label{display:block}
+.next b{display:block;margin-top:12px;font-weight:500;font-size:clamp(34px,4.6vw,64px);letter-spacing:-.045em;line-height:1}
+.next q{display:block;margin-top:14px;font-family:var(--grace);font-style:italic;font-size:22px;color:var(--body);quotes:"“" "”"}
+.next span.go{font-size:16px;font-weight:500;border-bottom:1px solid var(--ink);padding-bottom:4px;display:inline-flex;gap:10px;transition:color .5s var(--ease)}
+.next a:hover span.go{color:var(--bronze)}
+footer{margin-top:80px;border-top:1px solid var(--rule);padding-block:28px 56px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:space-between;font-size:14px;color:var(--graphite)}
+footer em{font-size:20px;color:var(--ink)}
+.reveal{will-change:transform,opacity}
+@media (prefers-reduced-motion:reduce){.gild.is-lit{animation:none}}
+</style>
+<style>
+/* Decision 3 additions: the surge, the levers, the day. */
+.surge{margin:72px 0 0}
+.surge svg{display:block;width:100%;height:auto;overflow:visible}
+.surge .dot{fill:var(--ink)}
+.surge .dot.over{fill:var(--bronze)}
+.surge .cap{stroke:var(--ink);stroke-width:1.2;stroke-dasharray:5 5}
+.surge text{font-size:14px;fill:var(--graphite);font-family:var(--voice)}
+.surge text.big{font-size:30px;fill:var(--ink);letter-spacing:-.03em}
+.surge text.it{font-family:var(--grace);font-style:italic;font-size:19px;fill:var(--bronze)}
+.surge figcaption{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px 24px;padding-top:12px;border-top:1px solid var(--rule);font-size:14px;color:var(--graphite)}
+.surge figcaption em{font-size:17px;color:var(--ink)}
+
+.levers{margin-top:64px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+@media (max-width:980px){.levers{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.levers{grid-template-columns:minmax(0,1fr)}}
+.levers > div{background:var(--ivory);padding:22px 22px 24px}
+.levers .label{display:block}
+.levers b{display:block;margin-top:10px;font-weight:400;font-size:40px;letter-spacing:-.04em;line-height:1}
+.levers p{margin:10px 0 0;font-size:15px;color:var(--graphite);line-height:1.45}
+.levers > div.hot{background:var(--sand)}
+
+.strats{margin-top:96px}
+.strats h3{font-size:clamp(28px,3vw,40px);letter-spacing:-.035em;line-height:1.1;max-width:22em}
+.strats h3 em{color:var(--bronze)}
+.srow{display:grid;grid-template-columns:minmax(150px,280px) minmax(0,1fr) 120px;gap:18px;align-items:center;padding:14px 0;border-bottom:1px solid var(--rule);font-size:16px}
+.srow:first-of-type{margin-top:28px;border-top:1px solid var(--rule)}
+@media (max-width:640px){.srow{grid-template-columns:minmax(0,1fr) 90px;font-size:15px}.srow .strack{grid-column:1/-1;grid-row:2}}
+.snote{margin:18px 0 0;max-width:46em;font-size:16px;line-height:1.6;color:var(--body);font-weight:300}
+.snote b{font-weight:500;color:var(--ink)}
+.srow.shead{padding:0 0 10px;font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--graphite)}
+.srow.shead div:last-child{text-align:right}
+@media (max-width:640px){.srow.shead div:nth-child(2){display:none}}
+.srow small{display:block;font-size:13px;color:var(--graphite)}
+.strack{height:16px;position:relative}
+.sfill{position:absolute;left:0;top:0;bottom:0;background:var(--ink);transform-origin:left}
+.srow.best .sfill{background:var(--bronze)}
+.srow.fail .sfill{background:repeating-linear-gradient(135deg,var(--stone) 0 4px,transparent 4px 8px)}
+.sval{text-align:right;font-variant-numeric:tabular-nums}
+.srow.best .sval{color:var(--bronze);font-weight:500}
+
+/* the day */
+.day{margin-top:64px}
+.day__bar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px 24px}
+.clock{font-size:clamp(48px,5vw,72px);font-weight:300;letter-spacing:-.045em;line-height:1;font-variant-numeric:tabular-nums}
+.clock small{display:block;margin-top:8px;font-size:15px;color:var(--graphite);letter-spacing:0}
+.tally{display:flex;flex-wrap:wrap;gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.tally div{background:var(--ivory);padding:12px 18px;min-width:150px}
+.tally b{display:block;font-weight:400;font-size:30px;letter-spacing:-.035em;line-height:1.05;font-variant-numeric:tabular-nums}
+.tally span{font-size:13px;color:var(--graphite)}
+.tally .p b{color:var(--bronze)}
+.day svg{display:block;width:100%;height:auto;margin-top:26px;overflow:visible}
+.day .grid line{stroke:var(--rule)}
+.day .grid text{font-size:13px;fill:var(--graphite)}
+.day .rowl{font-family:var(--grace);font-style:italic;font-size:17px;fill:var(--ink)}
+.day .ord{fill:var(--ink)}
+.day .capbox{fill:none;stroke:var(--stone);stroke-dasharray:3 3}
+.day .trip{stroke:var(--stone);stroke-width:1;stroke-dasharray:2 4}
+.day .out{fill:var(--bronze)}
+.day .gap{fill:rgba(138,100,39,.08)}
+.day .gapt{font-family:var(--grace);font-style:italic;font-size:17px;fill:var(--bronze)}
+.day .cursor{stroke:var(--bronze);stroke-width:1.4}
+.day .shade{fill:var(--ivory);opacity:.82}
+.day figcaption{margin-top:12px;font-size:14px;color:var(--graphite)}
+.daypin{min-height:100vh}
+.tally div{flex:1 1 140px}
+.day__list{display:none;list-style:none;margin:22px 0 0;padding:0;border-top:1px solid var(--ink)}
+.day__list li{display:grid;grid-template-columns:64px minmax(0,1fr);gap:4px 14px;padding:14px 0;border-bottom:1px solid var(--rule);opacity:.35;transition:opacity .5s var(--ease)}
+.day__list li.on{opacity:1}
+.day__list b{font-weight:500;font-size:20px;letter-spacing:-.02em}
+.day__list span{font-size:15px;color:var(--body);line-height:1.45}
+.day__list em{color:var(--bronze);font-size:17px}
+@media (max-width:760px){#daySvg,#day figcaption{display:none}.day__list{display:block}}
+
+
+.vs{margin-top:96px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+@media (max-width:760px){.vs{grid-template-columns:minmax(0,1fr)}}
+.vs > div{background:var(--ivory);padding:26px 26px 28px}
+.vs > div.win{background:var(--sand)}
+.vs h4{margin:0;font-weight:500;font-size:22px;letter-spacing:-.02em}
+.vs dl{margin:18px 0 0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 18px;font-size:16px}
+.vs dt{color:var(--graphite)}
+.vs dd{margin:0;text-align:right;font-variant-numeric:tabular-nums;font-weight:500}
+.vs .win dd.g{color:var(--bronze)}
+
+.guards{margin-top:64px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+@media (max-width:760px){.guards{grid-template-columns:minmax(0,1fr)}}
+.guards > div{background:var(--ivory);padding:22px 24px}
+.guards b{display:block;margin-top:8px;font-weight:400;font-size:34px;letter-spacing:-.04em;line-height:1}
+.guards p{margin:10px 0 0;font-size:15px;color:var(--graphite);line-height:1.45}
+.guards .bad b{color:#A2604B}
+.guards .ok{background:var(--sand)}
+</style>
+</head>
+<body>
+<header class="nav">
+  <div class="wrap nav__in">
+    <a class="brand" href="./">Arnav Chudiwale</a>
+    <nav aria-label="Primary"><ul>
+      <li><a href="./#decisions">Decisions</a></li>
+      <li><a href="./#experience">Experience</a></li>
+      <li><a href="./#note">About</a></li>
+      <li><a href="./#contact">Contact</a></li>
+    </ul></nav>
+  </div>
+</header>
+
+<aside class="rail" aria-label="Chapters">
+  <span class="rail__fill" id="railFill"></span>
+  <ol>
+    <li data-ch="feasible"><i></i><span>feasible</span></li>
+    <li data-ch="optimal"><i></i><span>optimal</span></li>
+    <li data-ch="engineered"><i></i><span>engineered</span></li>
+  </ol>
+</aside>
+
+<main>
+<!-- ======================================================= HERO -->
+<section class="hero wrap" id="top">
+  <div class="crumb"><i></i><span>Decision 3 · Service resilience</span><a href="./#decisions">All decisions</a></div>
+  <h1>Can we keep our delivery promise when demand <em class="gild">more than doubles?</em></h1>
+
+  <div class="memo">
+    <div class="memo__a"><span class="label">The answer</span><p>Yes, without buying a van. Add two hours of overtime, send vans out again as they come back, and buy the rest from a delivery partner under a contract sized for 2,000 packages.</p></div>
+    <div><span class="label">Peak day</span><div class="stat">3,906</div><span>packages ordered, against 1,600 the fleet can carry</span></div>
+    <div><span class="label">Packages outsourced</span><div class="stat">25% <em class="gold">fewer</em></div><span>1,447 handed to the delivery partner instead of 1,922, because vans go out again as they come back</span></div>
+    <div><span class="label">Cost of the peak day</span><div class="stat">5–19% <em class="gold">less</em></div><span>$29,500 to $35,000, against $36,651 for the best one-dispatch plan, with every package delivered and no new vans. The range depends on what a van's second trip costs.</span></div>
+  </div>
+  <p class="meta">Independent project · Simulated city of 500 stops around a New York depot · December 2025 · Python, Google OR-Tools</p>
+
+  <figure class="surge" id="surge">
+    <svg viewBox="0 0 1100 330" id="surgeSvg" role="img" aria-label="Each dot is 20 packages. A normal day of 1,490 packages fits under the fleet's 1,600-package capacity line; the peak day of 3,906 packages overflows it by 2,306."></svg>
+    <figcaption><span><em>Fig. 1</em> · Each dot is 20 packages. The dashed line is everything 32 vans can carry.</span><span>Normal day 1,490 · Peak day 3,906 (up 162%)</span></figcaption>
+  </figure>
+</section>
+
+<!-- ======================================================= I. FEASIBLE -->
+<section class="ch wrap" id="feasible">
+  <div class="ch__head">
+    <div>
+      <div class="ch__no"><i></i>I · feasible</div>
+      <h2 class="split-h">Doing nothing <em>breaks the promise.</em></h2>
+    </div>
+    <p class="ch__lede reveal">On the busiest day of the season, a city fulfillment center gets more than twice its normal orders. Its fleet can carry 1,600 packages. Every other package needs a plan.</p>
+  </div>
+
+  <div class="split">
+    <div class="split__text">
+      <ul class="pts">
+        <li class="reveal">A normal day is <b>1,490 packages</b>. The peak day is <b>3,906</b>, across 500 stops in eight neighborhoods.</li>
+        <li class="reveal">The fleet is <b>32 vans</b> carrying 50 packages each: <b>1,600</b> a day.</li>
+        <li class="reveal">Do nothing, and <b>59% of packages arrive late</b>. Late penalties alone reach <b>$41,508</b> for the day.</li>
+        <li class="reveal">Overtime by itself is not enough: even two extra hours deliver only about half the packages.</li>
+      </ul>
+    </div>
+    <div class="split__text">
+      <div class="facts" style="margin-top:0">
+        <div><b>1,600</b><span>packages the fleet can carry</span></div>
+        <div><b class="gold">2,306</b><span>packages over capacity</span></div>
+        <div><b>59%</b><span>late if nothing changes</span></div>
+        <div><b>$41,508</b><span>in late penalties for one day</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="levers">
+    <div><span class="label">Overtime</span><b>$6.25</b><p>per extra package, up to two hours before driver fatigue becomes the risk</p></div>
+    <div><span class="label">Delivery partner</span><b>$12.50</b><p>per package, as much as the contract allows</p></div>
+    <div><span class="label">Late delivery</span><b>$18.00</b><p>per package in penalties, and possibly the customer</p></div>
+    <div class="hot"><span class="label">Timing</span><b><em>free</em></b><p>vans come back after four hours, and can go out again</p></div>
+  </div>
+
+  <div class="strats" id="strats">
+    <h3 class="reveal">Six ways through the day, priced <em>per package delivered.</em></h3>
+    <p class="snote">The figure on the right is the <b>cost per package</b>: everything the peak day costs (the fleet's normal day, overtime, partner fees and late penalties) divided by the 3,906 packages ordered. Lower is better. The bar shows the same number.</p>
+    <div class="srow shead" aria-hidden="true"><div>Strategy</div><div></div><div>Cost per package</div></div>
+    <div class="srow fail"><div>Overtime only<small>Only 51% delivered on time</small></div><div class="strack"><div class="sfill" style="width:100%"></div></div><div class="sval">$12.09</div></div>
+    <div class="srow"><div>Partner takes all overflow<small>2,306 packages outsourced</small></div><div class="strack"><div class="sfill" style="width:82.7%"></div></div><div class="sval">$10.00</div></div>
+    <div class="srow"><div>48 min overtime + partner</div><div class="strack"><div class="sfill" style="width:80.6%"></div></div><div class="sval">$9.75</div></div>
+    <div class="srow"><div>72 min overtime + partner</div><div class="strack"><div class="sfill" style="width:79.6%"></div></div><div class="sval">$9.63</div></div>
+    <div class="srow"><div>96 min overtime + partner</div><div class="strack"><div class="sfill" style="width:78.7%"></div></div><div class="sval">$9.51</div></div>
+    <div class="srow best"><div>2 hours overtime + partner<small>Best one-dispatch plan · $36,651 for the day</small></div><div class="strack"><div class="sfill" style="width:77.6%"></div></div><div class="sval">$9.38</div></div>
+  </div>
+</section>
+
+<!-- ======================================================= II. OPTIMAL -->
+<section class="ch wrap" id="optimal">
+  <div class="ch__head">
+    <div>
+      <div class="ch__no"><i></i>II · optimal</div>
+      <h2 class="split-h">The cheapest capacity is <em>the van already coming back.</em></h2>
+    </div>
+    <p class="ch__lede reveal">Every package moved from the partner to overtime saves $6.25, so the best one-dispatch plan uses all the overtime drivers can safely give. Then I asked a different question: what if the vans go out more than once?</p>
+  </div>
+
+  <div class="day" id="day">
+    <div class="day__bar">
+      <div class="clock" id="clock">8:00<small>Scroll to run the day</small></div>
+      <div class="tally" aria-live="polite">
+        <div><b id="tOrd">0</b><span>orders so far</span></div>
+        <div><b id="tVan">0</b><span>carried by our vans</span></div>
+        <div class="p"><b id="tOut">0</b><span>sent to the partner</span></div>
+      </div>
+    </div>
+    <svg id="daySvg" viewBox="0 0 1100 420" role="img" aria-label="The peak day with wave dispatch. Orders arrive at 8, 10, 12 and 2 o'clock. At 8 the fleet goes out with room for 1,600 but only 859 packages, and is away until noon, so the 1,020 orders arriving at 10 go to the partner. At noon half the fleet goes out again with 800 packages and half waits; at 2 o'clock those 16 vans carry 800 of the 871 orders. In total 2,459 packages go on our vans and 1,447 go to the partner."></svg>
+    <ol class="day__list" id="dayList">
+      <li data-t="8"><b>8:00</b><span>859 orders. The vans leave with room for 1,600, <em>half empty</em>, and are away until noon.</span></li>
+      <li data-t="10"><b>10:00</b><span>1,020 orders. <em>Every van is out</em>, so all 1,020 go to the partner.</span></li>
+      <li data-t="12"><b>12:00</b><span>1,156 orders. All 32 vans are back. 16 go out again with 800 packages; <em>16 wait</em> for the 2 o'clock orders. 356 go to the partner.</span></li>
+      <li data-t="14"><b>14:00</b><span>871 orders. The 16 waiting vans carry 800; 71 go to the partner. They are back at 18:00, after <em>two hours of overtime</em>.</span></li>
+    </ol>
+    <figcaption><em>Fig. 2</em> · Wave dispatch on the peak day. Dark is loaded van space, the dashed box is the space that went out; the dotted line under it is the four-hour round trip.</figcaption>
+  </div>
+
+  <div class="vs" id="vs">
+    <div><h4>One dispatch, two hours overtime</h4>
+      <dl><dt>On our vans</dt><dd>1,984</dd><dt>Sent to the partner</dt><dd>1,922</dd><dt>Cost of the day</dt><dd>$36,651</dd><dt>Per package</dt><dd>$9.38</dd></dl></div>
+    <div class="win"><h4>Waves: vans go out again</h4>
+      <dl><dt>On our vans</dt><dd class="g">2,459</dd><dt>Sent to the partner</dt><dd class="g">1,447 (−25%)</dd><dt>Cost of the day</dt><dd class="g">$29,500 to $35,000</dd><dt>Per package</dt><dd class="g">$7.56 to $8.95</dd></dl></div>
+  </div>
+  <p class="verdict reveal">Same 32 vans, every package delivered, and <b>475 fewer packages</b> handed to someone else.</p>
+  <p class="ch__lede reveal" style="margin-top:16px;max-width:46em;font-size:16px">The saving is a range because it depends on what a van's second trip really costs: 5% if every in-house package is charged at its full share of the fleet's day, 19% if drivers and vans are already paid for and only overtime and the partner add cost.</p>
+</section>
+
+<!-- ======================================================= III. ENGINEERED -->
+<section class="ch wrap" id="engineered">
+  <div class="ch__head">
+    <div>
+      <div class="ch__no"><i></i>III · engineered</div>
+      <h2 class="split-h">The cost holds when the forecast <em>is wrong.</em></h2>
+    </div>
+    <p class="ch__lede reveal">Forecasts are never exact, so I tested the plan 20% either side. Move demand and watch what one package costs under the best one-dispatch plan.</p>
+  </div>
+
+  <div class="lab">
+    <div class="lab__controls">
+      <div class="ctl"><label for="dem">Peak-day demand <output id="demOut">forecast</output></label>
+        <input type="range" id="dem" min="-20" max="20" step="5" value="0">
+        <small>Against the forecast of 3,906 packages.</small></div>
+      <button type="button" class="ghost reset" id="labReset">Back to the forecast</button>
+      <p class="ch__lede" style="font-size:16px;margin:0">Cost per package moves by under a dollar either way. The pressure point is the partner: above about 4% over forecast, it needs more than the 2,000-package contract, so the contract should allow a flexible top-up.</p>
+    </div>
+    <div class="lab__out" aria-live="polite">
+      <span class="label">Cost per package delivered</span>
+      <div class="npv" id="cpp">$9.38</div>
+      <div class="lab__sub"><span>Packages <b id="pk">3,906</b></span><span>Sent to the partner <b id="po">1,922</b></span><span>Cost of the day <b id="tc">$36,651</b></span></div>
+      <div class="curve"><svg id="dcurve" viewBox="0 0 520 200" role="img" aria-label="Cost per package against demand: from 8.60 dollars at 20 percent below forecast to 9.90 dollars at 20 percent above"></svg></div>
+    </div>
+  </div>
+
+  <div class="tornado">
+    <h3 class="reveal">The real safety net is <em>the partner contract.</em></h3>
+    <div class="guards">
+      <div class="bad"><span class="label">Partner capacity 1,500</span><b>422 late</b><p>11% of the day's packages miss the promise.</p></div>
+      <div class="bad"><span class="label">Partner capacity 1,800</span><b>122 late</b><p>Still 3% late, and penalties start to bite.</p></div>
+      <div class="ok"><span class="label">Partner capacity 2,000</span><b class="gild">0 late</b><p>Every package delivered, with a small buffer for a bad hour.</p></div>
+    </div>
+  </div>
+
+  <div class="letter">
+    <article class="card reveal" aria-label="Recommendation memo">
+      <dl class="card__hd"><dt>To</dt><dd>Chief Operations Officer</dd><dt>From</dt><dd>Arnav Chudiwale</dd><dt>On</dt><dd>Keeping the delivery promise on peak days</dd></dl>
+      <h3>Keep the promise <em>without buying a van.</em></h3>
+      <ol>
+        <li><b>Make two hours of overtime the peak-day protocol.</b> Each package it moves off the partner saves $6.25.</li>
+        <li><b>Sign a partner contract that guarantees 2,000 packages.</b> Below about 1,900, packages start going late.</li>
+        <li><b>Pilot wave dispatch.</b> Re-sending vans as they return cuts partner volume by 25% on the same fleet.</li>
+        <li><b>Next test: don't send the whole fleet at 8:00.</b> The early wave leaves half empty, which is why nothing is left for the 10:00 spike. Holding vans back is the next saving.</li>
+      </ol>
+      <div class="sig" aria-label="Signed, Arnav Chudiwale">Arnav Chudiwale</div>
+    </article>
+  </div>
+
+  <div class="limits">
+    <div>
+      <h3>What the model <em>can't tell you.</em></h3>
+      <ul class="pts" style="margin-top:22px">
+        <li>The 500 stops are simulated around a New York depot, clustered in eight neighborhoods.</li>
+        <li>Orders arrive in four fixed windows, every round trip takes four hours, and there is no traffic, breakdown or failed delivery.</li>
+        <li>What a van's second trip really costs is uncertain, which is why the saving is a range.</li>
+        <li>The wave run was first checked on a demand profile that summed to 3,037 packages; the figures here are re-run on the full 3,906.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>For <em>technical readers.</em></h3>
+      <details>
+        <summary>Models, data and tools</summary>
+        <div class="tech">
+          <p><b>1 · Peak-day plan (linear program).</b> Decides how to cover the gap between what is ordered and what the fleet can carry, at the lowest cost.</p>
+          <dl class="defs">
+            <dt>Given</dt><dd><i>D</i> = 3,906 packages ordered · <i>B</i> = 1,600 packages the fleet carries in a normal day (32 vans × 50) · <i>r</i> = 192 extra packages per hour of fleet overtime (6 per van-hour × 32 vans) · <i>c<sub>o</sub></i> = $1,200 per fleet overtime hour ($37.50 per van-hour) · <i>c<sub>u</sub></i> = $12.50 per partner package · <i>c<sub>l</sub></i> = $18 per late package · <i>U</i> = partner contract limit · <i>F</i> = $10,225.81, the fleet's fixed day cost</dd>
+            <dt>Decide</dt><dd><i>o</i> = overtime hours for the fleet (0 to 2) · <i>u</i> = packages sent to the partner · <i>l</i> = packages delivered late</dd>
+          </dl>
+          <p class="math"><span class="lbl">Objective · lowest cost of the day</span>minimize &nbsp; <i>F</i> + <i>c<sub>o</sub></i>·<i>o</i> + <i>c<sub>u</sub></i>·<i>u</i> + <i>c<sub>l</sub></i>·<i>l</i>
+<span class="lbl">Constraints</span><i>B</i> + <i>r</i>·<i>o</i> + <i>u</i> + <i>l</i> = <i>D</i> <span class="why">every package is delivered by someone, or late</span><br>0 ≤ <i>o</i> ≤ 2 <span class="why">at most two hours of overtime</span><br><i>u</i> ≤ <i>U</i> <span class="why">the partner takes no more than the contract</span><br><i>u</i>, <i>l</i> ≥ 0</p>
+          <p>Result: <i>o</i> = 2, <i>u</i> = 1,922, <i>l</i> = 0, for $36,651. Overtime is used first because it costs $6.25 per extra package, against $12.50 for the partner and $18 for a late delivery. The six strategies above are this model with <i>o</i> fixed at 0, 48, 72, 96 or 120 minutes; "Overtime only" also sets <i>u</i> = 0.</p>
+
+          <p><b>2 · Routing (capacitated vehicle routing, Google OR-Tools).</b> Builds the van routes for a normal day.</p>
+          <dl class="defs">
+            <dt>Given</dt><dd><i>N</i> = 500 stops plus one depot · <i>K</i> = 32 vans · <i>Q</i> = 50 packages per van · <i>q<sub>i</sub></i> = packages for stop <i>i</i> · <i>c<sub>ij</sub></i> = travel distance from stop <i>i</i> to stop <i>j</i></dd>
+            <dt>Decide</dt><dd><i>x<sub>ijk</sub></i> = 1 if van <i>k</i> drives from <i>i</i> straight to <i>j</i>, otherwise 0</dd>
+          </dl>
+          <p class="math"><span class="lbl">Objective · shortest total driving</span>minimize &nbsp; Σ<sub><i>k</i></sub> Σ<sub><i>i</i>,<i>j</i></sub> <i>c<sub>ij</sub></i> <i>x<sub>ijk</sub></i>
+<span class="lbl">Constraints</span>each stop is visited by exactly one van, once<br>each van starts and ends at the depot<br>Σ<sub><i>i</i> on route <i>k</i></sub> <i>q<sub>i</sub></i> ≤ <i>Q</i> <span class="why">no van carries more than 50 packages</span><br>no loops that skip the depot</p>
+
+          <p><b>3 · Wave dispatch (simulation).</b> Tests sending vans out again as they come back, instead of once in the morning.</p>
+          <dl class="defs">
+            <dt>Given</dt><dd>Windows <i>w</i> = 8:00, 10:00, 12:00, 14:00 · <i>a<sub>w</sub></i> = packages ordered in each window (859, 1,020, 1,156, 871) · round trip = 4 hours · <i>v<sub>w</sub></i> = van space at the depot when the window opens (1,600, 0, 800, 800): all 32 vans leave at 8:00 and are back at noon; 16 go out again at noon, so only the other 16 are free at 2 o'clock</dd>
+            <dt>Rule</dt><dd>On our vans in window <i>w</i> = min(<i>a<sub>w</sub></i>, <i>v<sub>w</sub></i>); the rest goes to the partner</dd>
+          </dl>
+          <p>Result: 2,459 packages on our vans and 1,447 to the partner, against 1,984 and 1,922 with one dispatch. Any split of the noon fleet between 12:00 and 2 o'clock gives the same 2,459, so the result does not depend on that choice. The day costs $29,513 to $34,964 depending on the price of a second trip, 5–19% below $36,651.</p>
+
+          <p><b>Sensitivity.</b> Demand ±20% in 5% steps, partner capacity 1,500 to 2,000, overtime from 30 minutes to two hours. Maps in Folium.</p>
+          <p><a href="https://github.com/arnav-chudiwale" class="gold">Code on GitHub →</a></p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <nav class="next" aria-label="Next">
+    <a href="decision-2.html">
+      <div><span class="label">Previous · Decision 2 · Circular supply chain</span><b>Returns into revenue</b><q>Can our returns become revenue instead of waste?</q></div>
+      <span class="go">Read the decision <span aria-hidden="true">→</span></span>
+    </a>
+  </nav>
+</section>
+</main>
+
+<footer><div class="wrap"><span><em>Decisions, engineered.</em></span><span>Arnav Chudiwale · 2026</span></div></footer>
+
+<script>
+// every decision page opens at its top, however the visitor arrived
+(() => {
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  const toTop = () => {
+    if (location.hash) return;
+    window.scrollTo(0, 0);
+    try { document.getElementById('top').scrollIntoView({ block: 'start' }); window.scrollTo(0, 0); } catch (e) {}
+    if (window.__lenis) window.__lenis.scrollTo(0, { immediate: true, force: true });
+  };
+  toTop();
+  document.addEventListener('DOMContentLoaded', toTop);
+  window.addEventListener('load', () => { toTop(); requestAnimationFrame(toTop); });
+  window.addEventListener('pageshow', e => { if (e.persisted) toTop(); });
+})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/SplitText.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/DrawSVGPlugin.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js"></script>
+<script>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const NS = 'http://www.w3.org/2000/svg';
+  const mk = (tag, a, p) => { const e = document.createElementNS(NS, tag); for (const k in a) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; };
+  const txt = (p, a, t) => { const e = mk('text', a, p); e.textContent = t; return e; };
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fmt = n => Math.round(n).toLocaleString('en-US');
+
+  // ------------------------------------------------ Fig. 1: the surge, one dot = 20 packages
+  const sv = $('#surgeSvg');
+  const COLS = 10, R = 4.2, GAP = 11.5, base = 290;
+  const capY = base - (1600 / 20 / COLS) * GAP;
+  const block = (x0, n, label, sub) => {
+    const dots = [];
+    for (let i = 0; i < n; i++) {
+      const c = i % COLS, r = Math.floor(i / COLS);
+      dots.push(mk('circle', { class: 'dot' + (i >= 80 ? ' over' : ''), cx: x0 + c * GAP, cy: base - r * GAP, r: R }, sv));
+    }
+    txt(sv, { x: x0, y: base + 34, class: 'big' }, label);
+    txt(sv, { x: x0 + 98, y: base + 30 }, sub);
+    return dots;
+  };
+  const dN = block(90, Math.round(1490 / 20), '1,490', 'a normal day');
+  const dP = block(560, Math.round(3906 / 20), '3,906', 'the peak day');
+  mk('line', { class: 'cap', x1: 40, x2: 1060, y1: capY - GAP / 2, y2: capY - GAP / 2 }, sv);
+  txt(sv, { x: 1060, y: capY - GAP / 2 - 10, 'text-anchor': 'end' }, 'fleet capacity · 1,600');
+  txt(sv, { x: 700, y: 60, class: 'it' }, '2,306 over capacity');
+
+  // ------------------------------------------------ Fig. 2: the day, wave dispatch
+  const ds = $('#daySvg');
+  const X0 = 150, X1 = 1080, T0 = 8, T1 = 18;
+  const tx = t => X0 + (t - T0) / (T1 - T0) * (X1 - X0);
+  const rows = { ord: 70, van: 150, out: 380 };
+  const g = mk('g', { class: 'grid' }, ds);
+  for (let t = 8; t <= 18; t += 2) { mk('line', { x1: tx(t), x2: tx(t), y1: 20, y2: 400 }, g); txt(g, { x: tx(t), y: 414, 'text-anchor': 'middle' }, t + ':00'); }
+  txt(ds, { x: 0, y: rows.ord, class: 'rowl' }, 'orders arrive');
+  txt(ds, { x: 0, y: rows.van + 60, class: 'rowl' }, 'van space sent');
+  txt(ds, { x: 0, y: rows.out, class: 'rowl' }, 'sent to partner');
+  // the 10:00 gap: every van is out
+  mk('rect', { class: 'gap', x: tx(10) - 14, y: 34, width: 28, height: 360 }, ds);
+  const gapT = txt(ds, { x: tx(10) + 20, y: 104, class: 'gapt' }, 'every van is out');
+  const waves = [
+    { t: 8, orders: 859, vans: 32, load: 859, out: 0 },
+    { t: 10, orders: 1020, vans: 0, load: 0, out: 1020 },
+    { t: 12, orders: 1156, vans: 16, load: 800, out: 356 },
+    { t: 14, orders: 871, vans: 16, load: 800, out: 71 }
+  ];
+  const ordScale = 0.042, outScale = 0.06;
+  waves.forEach(w => {
+    mk('rect', { class: 'ord', x: tx(w.t) - 9, y: rows.ord - w.orders * ordScale, width: 18, height: w.orders * ordScale }, ds);
+    txt(ds, { x: tx(w.t) + 14, y: rows.ord - 4 }, fmt(w.orders));
+    if (w.out) { mk('rect', { class: 'out', x: tx(w.t) - 9, y: rows.out - w.out * outScale, width: 18, height: w.out * outScale }, ds); txt(ds, { x: tx(w.t) + 14, y: rows.out - 4 }, fmt(w.out)); }
+  });
+  // van capacity offered in each window: dark = loaded, grey = empty space that left anyway
+  const capScale = 0.085;
+  const caps = [{ t: 8, cap: 1600 }, { t: 10, cap: 0 }, { t: 12, cap: 800 }, { t: 14, cap: 800 }];
+  caps.forEach((c, k) => {
+    const w = waves[k], yb = rows.van + 110;
+    if (c.cap) {
+      mk('rect', { class: 'capbox', x: tx(c.t) - 9, y: yb - c.cap * capScale, width: 18, height: c.cap * capScale }, ds);
+      mk('rect', { class: 'ord', x: tx(c.t) - 9, y: yb - w.load * capScale, width: 18, height: w.load * capScale }, ds);
+      txt(ds, { x: tx(c.t) + 14, y: yb - 4 }, fmt(w.load) + ' of ' + fmt(c.cap));
+      mk('line', { class: 'trip', x1: tx(c.t), x2: tx(c.t + 4), y1: yb + 14, y2: yb + 14 }, ds);
+    } else txt(ds, { x: tx(c.t) + 14, y: yb - 4 }, 'none left');
+  });
+  txt(ds, { x: tx(8) + 14, y: rows.van + 110 - 1600 * capScale + 12, class: 'gapt' }, 'leaves half empty');
+  txt(ds, { x: tx(14) + 14, y: rows.van + 150, class: 'gapt' }, 'back at 18:00: two hours of overtime');
+  const shade = mk('rect', { class: 'shade', x: tx(8), y: 20, width: X1 - tx(8) + 20, height: 380 }, ds);
+  const cursor = mk('line', { class: 'cursor', x1: tx(8), x2: tx(8), y1: 20, y2: 400 }, ds);
+
+  const setTime = t => {
+    const x = tx(t);
+    cursor.setAttribute('x1', x); cursor.setAttribute('x2', x);
+    shade.setAttribute('x', x); shade.setAttribute('width', Math.max(0, X1 - x + 20));
+    const h = Math.floor(t), m = Math.round((t - h) * 60 / 15) * 15;
+    $('#clock').firstChild.nodeValue = h + ':' + String(m === 60 ? 0 : m).padStart(2, '0');
+    const done = waves.filter(w => w.t <= t + 1e-6);
+    $('#tOrd').textContent = fmt(done.reduce((s, w) => s + w.orders, 0));
+    $('#tVan').textContent = fmt(done.reduce((s, w) => s + w.load, 0));
+    $('#tOut').textContent = fmt(done.reduce((s, w) => s + w.out, 0));
+    $$('#dayList li').forEach(li => li.classList.toggle('on', +li.dataset.t <= t + 1e-6));
+  };
+  setTime(reduce ? 18 : 8);
+
+  // ------------------------------------------------ demand lab (the project's own sensitivity table)
+  const SENS = { '-20': [3124, 1140, 26875.81, 8.61], '-15': [3320, 1336, 29325.81, 8.83], '-10': [3515, 1531, 31763.31, 9.03], '-5': [3710, 1726, 34200.81, 9.22], '0': [3906, 1922, 36650.81, 9.39], '5': [4101, 2117, 39088.31, 9.53], '10': [4296, 2312, 41525.81, 9.67], '15': [4491, 2507, 43963.31, 9.79], '20': [4687, 2703, 46413.31, 9.90] };
+  const dc = $('#dcurve'), W = 520, H = 200, pL = 46, pR = 12, pT = 14, pB = 30;
+  const xs = v => pL + (v + 20) / 40 * (W - pL - pR), ys = v => pT + (10.2 - v) / (10.2 - 8.3) * (H - pT - pB);
+  mk('line', { class: 'axis', x1: pL, y1: H - pB, x2: W - pR, y2: H - pB }, dc);
+  [[-20, '−20%'], [-10, '−10%'], [0, 'forecast'], [10, '+10%'], [20, '+20%']].forEach(([v, t]) => txt(dc, { x: xs(v), y: H - 10, 'text-anchor': 'middle' }, t));
+  [8.5, 9, 9.5, 10].forEach(v => txt(dc, { x: pL - 8, y: ys(v) + 4, 'text-anchor': 'end' }, '$' + v.toFixed(2)));
+  let d = ''; Object.keys(SENS).map(Number).sort((a, b) => a - b).forEach((k, i) => d += (i ? 'L' : 'M') + xs(k) + ' ' + ys(SENS[k][2] / SENS[k][0]));
+  mk('path', { class: 'line', d }, dc);
+  const dot = mk('circle', { r: 6 }, dc);
+  const dem = $('#dem');
+  const upd = () => {
+    const v = +dem.value, r = SENS[String(v)];
+    $('#demOut').textContent = v === 0 ? 'forecast' : (v > 0 ? '+' : '−') + Math.abs(v) + '%';
+    $('#cpp').textContent = '$' + (r[2] / r[0]).toFixed(2); $('#pk').textContent = fmt(r[0]); $('#po').textContent = fmt(r[1]) + (r[1] > 2000 ? ' · over contract' : ''); $('#po').classList.toggle('warn', r[1] > 2000); $('#tc').textContent = '$' + fmt(r[2]);
+    dot.setAttribute('cx', xs(v)); dot.setAttribute('cy', ys(r[2] / r[0]));
+  };
+  const resetBtn = $('#labReset');
+  const syncReset = () => { const at = +dem.value === 0; resetBtn.disabled = at; resetBtn.textContent = at ? 'You are on the forecast' : 'Back to the forecast'; };
+  dem.addEventListener('input', () => { upd(); syncReset(); });
+  resetBtn.addEventListener('click', () => {
+    const from = { v: +dem.value };
+    const done = () => { dem.value = 0; upd(); syncReset(); };
+    if (window.gsap && !reduce) gsap.to(from, { v: 0, duration: 0.7, ease: 'power3.inOut', onUpdate: () => { dem.value = Math.round(from.v / 5) * 5; upd(); }, onComplete: done });
+    else done();
+  });
+  upd(); syncReset();
+
+  // ------------------------------------------------ gold sweeps
+  const gio = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-lit'); gio.unobserve(e.target); } }), { rootMargin: '0px 0px -12% 0px' });
+  $$('.gild').forEach(el => gio.observe(el));
+
+  if (!window.gsap || reduce) return;
+  gsap.registerPlugin(ScrollTrigger, SplitText, DrawSVGPlugin);
+  gsap.defaults({ ease: 'expo.out' });
+  const lenis = new Lenis({ lerp: 0.09, smoothWheel: true });
+  window.__lenis = lenis; if (!location.hash) lenis.scrollTo(0, { immediate: true, force: true });
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add(t => lenis.raf(t * 1000)); gsap.ticker.lagSmoothing(0);
+
+  const h1 = SplitText.create('.hero h1', { type: 'lines', mask: 'lines' });
+  gsap.timeline().from('.crumb', { autoAlpha: 0, y: 12, duration: 1 }, 0).from(h1.lines, { yPercent: 105, duration: 1.5, stagger: 0.12 }, 0.1).from('.memo > div', { autoAlpha: 0, y: 24, duration: 1.3, stagger: 0.1 }, 0.6).from('.meta', { autoAlpha: 0, duration: 1 }, 1.1);
+
+  // the surge: dots stack up; the overflow rises past the line
+  gsap.timeline({ scrollTrigger: { trigger: '#surge', start: 'top 85%', end: 'center 45%', scrub: 1.2 } })
+    .from(dN, { scale: 0, transformOrigin: 'center', stagger: { each: 0.004 }, ease: 'back.out(2)' }, 0)
+    .from(dP, { scale: 0, transformOrigin: 'center', stagger: { each: 0.004 }, ease: 'back.out(2)' }, 0.15);
+
+  $$('.split-h').forEach(el => { const s = SplitText.create(el, { type: 'lines', mask: 'lines' }); gsap.from(s.lines, { yPercent: 105, stagger: 0.1, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 90%', end: 'top 60%', scrub: 1.2 } }); });
+  $$('.reveal').forEach(el => gsap.from(el, { autoAlpha: 0, y: 30, ease: 'power2.out', scrollTrigger: { trigger: el, start: 'top 92%', end: 'top 70%', scrub: 1.2 } }));
+  $$('.ch__no').forEach(el => gsap.from(el, { autoAlpha: 0, x: -20, ease: 'power2.out', scrollTrigger: { trigger: el, start: 'top 92%', end: 'top 75%', scrub: 1 } }));
+  gsap.from('.levers > div', { autoAlpha: 0, y: 30, stagger: 0.12, ease: 'power2.out', scrollTrigger: { trigger: '.levers', start: 'top 90%', end: 'top 60%', scrub: 1.2 } });
+  gsap.from('.sfill', { scaleX: 0, stagger: 0.1, ease: 'power3.out', scrollTrigger: { trigger: '#strats', start: 'top 75%', end: 'bottom 70%', scrub: 1.2 } });
+  gsap.from('.vs > div', { autoAlpha: 0, y: 36, stagger: 0.2, ease: 'power2.out', scrollTrigger: { trigger: '#vs', start: 'top 90%', end: 'top 60%', scrub: 1.2 } });
+  gsap.from('.guards > div', { autoAlpha: 0, y: 30, stagger: 0.15, ease: 'power2.out', scrollTrigger: { trigger: '.guards', start: 'top 90%', end: 'top 60%', scrub: 1.2 } });
+  gsap.from('#dcurve .line', { drawSVG: 0, ease: 'power2.inOut', scrollTrigger: { trigger: '.lab', start: 'top 75%', end: 'top 35%', scrub: 1.2 } });
+
+  // the day: pin it and let the scroll be the clock
+  const clock = { t: 8 };
+  gsap.to(clock, { t: 18, ease: 'none', onUpdate: () => setTime(clock.t), scrollTrigger: { trigger: '#day', start: 'top 90px', end: '+=1400', scrub: 0.6, pin: true, pinSpacing: true } });
+
+  // rail
+  const chapters = ['feasible', 'optimal', 'engineered'];
+  const current = () => chapters.slice().reverse().find(id => $('#' + id).getBoundingClientRect().top < innerHeight * .55) || '';
+  ScrollTrigger.create({ trigger: '#feasible', start: 'top 55%', endTrigger: '#engineered', end: 'bottom 55%', onUpdate: s => { $('#railFill').style.height = (s.progress * 100) + '%'; const c = current(); chapters.forEach(id => $(`.rail li[data-ch="${id}"]`).classList.toggle('on', chapters.indexOf(id) <= chapters.indexOf(c))); } });
+})();
+</script>
+</body>
+</html>

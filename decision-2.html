@@ -1,0 +1,775 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Circular supply chain · Arnav Chudiwale</title>
+<meta name="description" content="Can returned phones become revenue instead of waste? A refurbishment network for 54 stores, chosen by optimization and tested as a business case.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,300..700;1,300..700&family=Instrument+Serif:ital@0;1&family=Mrs+Saint+Delafield&display=swap">
+<style>
+/* Decision 2. One grammar, three chapters: many returned phones are sorted into value (feasible), many networks narrow to one (optimal), one business case is stress-tested (engineered). */
+:root{
+  --ivory:#F4EFE6; --sand:#E9E0D0; --ink:#16171B; --night:#0F1114;
+  --bronze:#8A6427; --champagne:#D8B26A; --graphite:#5B564D; --stone:#8C8579; --body:#2B2A27;
+  --rule:rgba(22,23,27,.14); --mist:#D9D3C7;
+  --voice:'Hanken Grotesk','Helvetica Neue',Arial,sans-serif;
+  --grace:'Instrument Serif','Times New Roman',Georgia,serif;
+  --hand:'Mrs Saint Delafield','Snell Roundhand',cursive;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --gutter:clamp(20px,5vw,72px);
+  --gild-day:linear-gradient(100deg,#7A561F 0%,#A47A33 13%,#87622A 27%,#9D7431 40%,#E4BC68 50%,#9D7431 60%,#87622A 73%,#A47A33 87%,#7A561F 100%);
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+body{margin:0;background:var(--ivory);color:var(--ink);font-family:var(--voice);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:1px solid var(--bronze);outline-offset:4px}
+em{font-family:var(--grace);font-style:italic;font-weight:400;letter-spacing:-.01em}
+.wrap{max-width:1280px;margin:0 auto;padding-inline:var(--gutter);position:relative}
+.label{font-size:14px;font-weight:500;color:var(--graphite)}
+.gold{color:var(--bronze)}
+.gild{background-image:var(--gild-day);background-size:260% 100%;background-position:100% 50%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.gild.is-lit{animation:sweep 2.4s cubic-bezier(.45,0,.2,1) .2s both}
+@keyframes sweep{from{background-position:100% 50%}to{background-position:0% 50%}}
+h1,h2,h3{font-weight:500;margin:0;text-wrap:balance}
+
+/* nav */
+.nav{position:fixed;top:0;left:0;right:0;z-index:20;background:rgba(244,239,230,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--rule)}
+.nav__in{display:flex;flex-wrap:wrap;gap:10px 28px;align-items:center;justify-content:space-between;padding-block:20px}
+.brand{font-size:16px;font-weight:500;letter-spacing:-.02em;text-decoration:none}
+.nav ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:24px;font-size:15px;font-weight:500}
+.nav ul a{text-decoration:none}
+.nav ul a:hover{color:var(--bronze)}
+
+/* chapter rail */
+.rail{position:fixed;left:clamp(14px,2vw,30px);top:50%;transform:translateY(-50%);z-index:15;display:none}
+@media (min-width:1400px){.rail{display:block}}
+.rail ol{list-style:none;margin:0;padding:0;position:relative}
+.rail ol::before{content:"";position:absolute;left:5px;top:6px;bottom:6px;width:1px;background:var(--rule)}
+.rail__fill{position:absolute;left:5px;top:22px;width:1px;height:0;max-height:calc(100% - 44px);background:var(--bronze);z-index:1}
+.rail li{position:relative;display:flex;align-items:center;gap:12px;padding:16px 0}
+.rail li i{width:11px;height:11px;border-radius:50%;border:1px solid var(--stone);background:var(--ivory);transition:all .6s var(--ease);flex:none;position:relative;z-index:1}
+.rail li span{font-family:var(--grace);font-style:italic;font-size:17px;color:var(--stone);opacity:0;transform:translateX(-6px);transition:all .6s var(--ease)}
+.rail li.on i{border-color:var(--bronze);background:var(--bronze)}
+.rail li.on span{opacity:1;transform:none;color:var(--bronze)}
+.rail:hover li span{opacity:1;transform:none}
+
+/* hero */
+.hero{padding-top:150px}
+.crumb{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:15px;font-weight:500;color:var(--bronze)}
+.crumb i{display:block;width:28px;height:1px;background:var(--bronze)}
+.crumb a{text-decoration:none;color:var(--graphite)}
+.crumb a:hover{color:var(--bronze)}
+.hero h1{margin-top:26px;font-size:clamp(46px,7.4vw,112px);line-height:.98;letter-spacing:-.05em;max-width:13.5em}
+.memo{margin-top:56px;display:grid;grid-template-columns:minmax(0,1.25fr) repeat(3,minmax(0,1fr));border-top:1px solid var(--ink)}
+@media (max-width:980px){.memo{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.memo__a{grid-column:1/-1}}
+@media (max-width:560px){.memo{grid-template-columns:minmax(0,1fr)}}
+.memo > div{padding:22px 28px 26px 0;border-bottom:1px solid var(--rule)}
+.memo > div + div{padding-left:28px;border-left:1px solid var(--rule)}
+@media (max-width:980px){.memo > div + div{border-left:0;padding-left:0}.memo > div:nth-child(3),.memo > div:nth-child(4){padding-left:28px;border-left:1px solid var(--rule)}.memo > div:nth-child(2){padding-left:0;border-left:0}}
+@media (max-width:560px){.memo > div:nth-child(n){padding-left:0;border-left:0}}
+.memo .label{display:block;margin-bottom:10px}
+.memo__a p{margin:0;font-size:clamp(19px,1.6vw,22px);line-height:1.45;font-weight:400;letter-spacing:-.01em}
+.stat{font-size:clamp(32px,3.1vw,46px);line-height:1;letter-spacing:-.04em;font-weight:400;white-space:nowrap}
+.stat em{font-size:1.05em}
+.stat + span{display:block;margin-top:10px;font-size:15px;color:var(--graphite);line-height:1.45}
+.meta{margin-top:18px;font-size:14px;color:var(--graphite)}
+
+/* the sieve */
+.sieve{margin:72px 0 0;position:relative}
+.sieve canvas{display:block;width:100%;height:340px;background:transparent}
+@media (max-width:700px){.sieve canvas{height:300px}}
+.sieve__top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px 24px;padding-bottom:14px;border-bottom:1px solid var(--rule)}
+.sieve__top .label em{font-size:17px;color:var(--ink)}
+.sieve__count{display:flex;align-items:baseline;gap:12px}
+.sieve__count b{font-weight:400;font-size:clamp(40px,4vw,56px);letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.sieve__count span{font-size:15px;color:var(--graphite)}
+.sieve figcaption{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px 24px;padding-top:12px;font-size:14px;color:var(--graphite)}
+.sieve figcaption em{font-size:17px;color:var(--ink)}
+.ghost{font:inherit;font-size:15px;font-weight:500;background:none;border:0;border-bottom:1px solid var(--ink);padding:0 0 4px;cursor:pointer;color:var(--ink)}
+
+/* chapters */
+.ch{padding-top:150px}
+.ch__head{display:flex;flex-wrap:wrap;gap:24px 64px;align-items:flex-end;justify-content:space-between}
+.ch__no{font-family:var(--grace);font-style:italic;font-size:clamp(20px,1.8vw,24px);color:var(--bronze);display:flex;align-items:center;gap:14px}
+.ch__no i{display:block;width:28px;height:1px;background:var(--bronze)}
+.ch h2{margin-top:18px;font-size:clamp(38px,5vw,72px);line-height:1;letter-spacing:-.045em;max-width:14em}
+.ch h2 em{color:var(--bronze)}
+.ch__lede{flex:0 1 420px;margin:0;font-weight:300;color:var(--body);font-size:18px}
+
+.split{margin-top:64px;display:flex;flex-wrap:wrap;gap:48px 72px;align-items:flex-start}
+.split__text{flex:1 1 380px;min-width:0}
+.split__fig{flex:1 1 460px;min-width:0;margin:0}
+.pts{list-style:none;margin:0;padding:0;display:grid;gap:16px}
+.pts li{position:relative;padding-left:24px;font-size:18px;line-height:1.55;font-weight:300;color:var(--body)}
+.pts li::before{content:"";position:absolute;left:0;top:.8em;width:12px;height:1px;background:var(--bronze)}
+.pts b{font-weight:500;color:var(--ink)}
+.facts{margin-top:40px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.facts div{background:var(--ivory);padding:18px 20px}
+.facts b{display:block;font-weight:400;font-size:32px;letter-spacing:-.035em;line-height:1.05}
+.facts span{display:block;margin-top:6px;font-size:14px;color:var(--graphite);line-height:1.4}
+
+/* map */
+.map svg{display:block;width:100%;height:auto;overflow:visible}
+.map .link{fill:none;stroke:var(--ink);stroke-opacity:.25;stroke-width:.8}
+.map .link.best{stroke:var(--bronze);stroke-opacity:.7;stroke-width:.9}
+.map .store{fill:var(--ink)}
+.map .site{fill:var(--ivory);stroke:var(--stone);stroke-width:1;stroke-dasharray:2 3;transition:all .5s var(--ease)}
+.map .site.open{stroke:var(--bronze);stroke-width:1.8;stroke-dasharray:none;fill:var(--ivory)}
+.map .site.open + .site__dot{opacity:1}
+.map .site__dot{fill:var(--bronze);opacity:0;transition:opacity .5s}
+.map text{font-family:var(--grace);font-style:italic;font-size:15px;fill:var(--graphite)}
+.map text.on{fill:var(--bronze)}
+.map figcaption{margin-top:10px;font-size:14px;color:var(--graphite);display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 20px}
+.counter{display:flex;align-items:baseline;gap:12px;margin-top:36px}
+.counter b{font-size:56px;font-weight:300;letter-spacing:-.045em;line-height:1;font-variant-numeric:tabular-nums;min-width:1.4ch}
+.counter span{font-size:16px;color:var(--graphite)}
+
+/* the switch */
+.switch{display:inline-flex;border:1px solid var(--ink);margin-top:8px}
+.switch button{font:inherit;font-size:15px;font-weight:500;background:var(--ivory);color:var(--ink);border:0;padding:12px 18px;cursor:pointer;transition:background .5s var(--ease),color .5s var(--ease)}
+.switch button[aria-pressed="true"]{background:var(--ink);color:var(--ivory)}
+.modes{margin-top:28px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.modes > div{background:var(--ivory);padding:18px 20px;transition:background .6s var(--ease)}
+.modes > div.on{background:var(--sand)}
+.modes .label{display:block}
+.modes b{display:block;margin-top:8px;font-weight:400;font-size:24px;letter-spacing:-.025em;line-height:1.2}
+.modes dl{margin:12px 0 0;display:grid;grid-template-columns:auto auto;justify-content:start;gap:4px 14px;font-size:15px}
+.modes dt{color:var(--graphite)}
+.modes dd{margin:0;font-variant-numeric:tabular-nums}
+.verdict{margin-top:26px;font-family:var(--grace);font-style:italic;font-size:clamp(24px,2.2vw,30px);line-height:1.25;color:var(--ink)}
+.verdict .hl{background-image:var(--gild-day);background-size:260% 100%;background-position:100% 50%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:sweep 2.4s cubic-bezier(.45,0,.2,1) .2s both}
+.verdict b{font-family:var(--voice);font-style:normal;font-weight:500;letter-spacing:-.02em}
+
+/* cost bars */
+.bars{margin-top:110px}
+.bars h3{font-size:clamp(28px,3vw,40px);letter-spacing:-.035em;line-height:1.1;max-width:20em}
+.bars h3 em{color:var(--bronze)}
+.bar{margin-top:30px}
+.bar__row{display:flex;justify-content:space-between;gap:12px;font-size:15px;color:var(--graphite)}
+.bar__row b{font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums}
+.bar__track{margin-top:8px;height:34px;position:relative}
+.bar__fill{position:absolute;left:0;top:0;bottom:0;background:var(--ink);transform-origin:left;width:100%}
+.bar__fill.thin{width:2px;background:var(--bronze)}
+.bar__note{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-family:var(--grace);font-style:italic;font-size:19px;color:var(--bronze);white-space:nowrap}
+
+/* grades */
+.grades{margin-top:110px;display:flex;flex-wrap:wrap;gap:40px 72px;align-items:flex-end}
+.grades__text{flex:1 1 360px}
+.grades__text h3{font-size:clamp(28px,3vw,40px);letter-spacing:-.035em;line-height:1.1}
+.grades__text h3 em{color:var(--bronze)}
+.grades__text p{margin:18px 0 0;font-weight:300;color:var(--body);font-size:18px;max-width:30em}
+.mix{flex:1 1 520px;min-width:0}
+.mix__bar{display:flex;height:64px;gap:3px}
+.mix__bar div{position:relative;display:flex;align-items:flex-end;padding:0 0 10px 12px;color:var(--ivory);font-size:15px;font-weight:500;transform-origin:left}
+.mix__a{flex:25;background:#A47A33}.mix__b{flex:45;background:var(--bronze)}.mix__c{flex:30;background:var(--stone)}
+.mix__legend{margin-top:16px;display:grid;grid-template-columns:25fr 45fr 30fr;gap:3px;font-size:14px;color:var(--graphite);line-height:1.4}
+.mix__legend b{display:block;color:var(--ink);font-weight:500}
+@media (max-width:560px){.mix__legend{grid-template-columns:1fr}}
+.compare{margin-top:34px;display:flex;align-items:baseline;gap:22px;flex-wrap:wrap}
+.compare s{font-size:clamp(34px,3.2vw,46px);color:var(--stone);text-decoration-thickness:1px;letter-spacing:-.03em}
+.compare b{font-weight:400;font-size:clamp(56px,6vw,88px);letter-spacing:-.05em;line-height:1}
+.compare span{font-size:15px;color:var(--graphite)}
+
+/* engineered: the lab */
+.lab{margin-top:64px;display:flex;flex-wrap:wrap;gap:48px 72px;align-items:stretch}
+.lab__controls{flex:1 1 360px;min-width:0;display:flex;flex-direction:column;gap:30px}
+.ctl label{display:flex;justify-content:space-between;gap:12px;font-size:16px;font-weight:500}
+.ctl label output{font-variant-numeric:tabular-nums;color:var(--bronze)}
+.ctl input[type=range]{width:100%;margin-top:14px;-webkit-appearance:none;appearance:none;height:28px;background:transparent;cursor:pointer}
+.ctl input[type=range]::-webkit-slider-runnable-track{height:1px;background:var(--ink)}
+.ctl input[type=range]::-moz-range-track{height:1px;background:var(--ink)}
+.ctl input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--ivory);border:1.5px solid var(--bronze);margin-top:-9px}
+.ctl input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--ivory);border:1.5px solid var(--bronze)}
+.ctl small{display:block;margin-top:6px;font-size:14px;color:var(--graphite);line-height:1.45}
+.reset{align-self:flex-start;position:relative;z-index:2}
+.reset:disabled{color:var(--stone);border-color:var(--rule);cursor:default}
+.lab__out{flex:1 1 480px;min-width:0;background:var(--night);color:var(--ivory);padding:clamp(24px,3vw,40px)}
+.lab__out .label{color:var(--champagne)}
+.npv{margin-top:10px;font-size:clamp(56px,6.5vw,96px);font-weight:400;letter-spacing:-.05em;line-height:1;font-variant-numeric:tabular-nums}
+.npv.neg{color:#C98F7A}
+.lab__sub{margin-top:12px;display:flex;flex-wrap:wrap;gap:6px 26px;font-size:15px;color:var(--mist)}
+.lab__sub b{font-weight:500;color:var(--ivory);font-variant-numeric:tabular-nums}
+.lab__verdict{margin-top:18px;font-family:var(--grace);font-style:italic;font-size:22px;color:var(--champagne);min-height:1.4em}
+.curve{margin-top:22px}
+.curve svg{display:block;width:100%;height:auto;overflow:visible}
+.curve .axis{stroke:var(--mist);stroke-opacity:.35;stroke-width:1}
+.curve .zero{stroke:var(--mist);stroke-opacity:.6;stroke-dasharray:3 4}
+.curve .line{fill:none;stroke:var(--champagne);stroke-width:2}
+.curve .be{stroke:#C98F7A;stroke-width:1;stroke-dasharray:2 3}
+.curve circle{fill:var(--night);stroke:var(--champagne);stroke-width:1.6}
+.curve text{font-size:12px;fill:var(--mist)}
+.curve text.k{font-family:var(--grace);font-style:italic;font-size:15px;fill:var(--champagne)}
+.curve text.r{fill:#C98F7A;font-family:var(--grace);font-style:italic;font-size:15px}
+
+.scen{margin-top:64px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+@media (max-width:760px){.scen{grid-template-columns:minmax(0,1fr)}}
+.scen > div{background:var(--ivory);padding:22px 24px}
+.scen > div.base{background:var(--sand)}
+.scen b{display:block;margin-top:8px;font-weight:400;font-size:40px;letter-spacing:-.04em;line-height:1}
+.scen p{margin:10px 0 0;font-size:15px;color:var(--graphite);line-height:1.45}
+
+.tornado{margin-top:96px}
+.tornado h3{font-size:clamp(28px,3vw,40px);letter-spacing:-.035em;line-height:1.1;max-width:22em}
+.tornado h3 em{color:var(--bronze)}
+.tor{margin-top:32px;display:grid;gap:14px}
+.tor__row{display:grid;grid-template-columns:150px minmax(0,1fr) 110px;gap:16px;align-items:center;font-size:15px}
+@media (max-width:620px){.tor__row{grid-template-columns:96px minmax(0,1fr) 84px;font-size:14px}}
+.tor__track{position:relative;height:22px}
+.tor__track::before{content:"";position:absolute;left:50%;top:-6px;bottom:-6px;width:1px;background:var(--ink);opacity:.4}
+.tor__lo,.tor__hi{position:absolute;top:0;bottom:0;transform-origin:center}
+.tor__lo{right:50%;background:var(--stone)}
+.tor__hi{left:50%;background:var(--bronze)}
+.tor__val{font-variant-numeric:tabular-nums;color:var(--graphite);text-align:right}
+.tor__head{margin-top:28px;display:flex;justify-content:space-between;font-size:13px;color:var(--graphite);padding-bottom:8px;border-bottom:1px solid var(--rule)}
+.tor__legend{margin-top:16px;display:flex;flex-wrap:wrap;gap:8px 24px;font-size:14px;color:var(--graphite)}
+.tor__legend i{display:inline-block;width:12px;height:12px;margin-right:8px;vertical-align:-1px}
+
+/* memo card */
+.letter{margin-top:150px;display:flex;justify-content:center}
+.card{width:100%;max-width:820px;background:var(--sand);padding:clamp(28px,5vw,64px);position:relative;box-shadow:0 30px 60px -40px rgba(22,23,27,.35)}
+.card::before{content:"";position:absolute;inset:12px;border:1px solid rgba(138,100,39,.35);pointer-events:none}
+.card__hd{display:grid;grid-template-columns:72px minmax(0,1fr);gap:6px 14px;font-size:15px;padding-bottom:20px;border-bottom:1px solid var(--rule)}
+.card__hd dt{color:var(--graphite)}
+.card__hd dd{margin:0;font-weight:500}
+.card h3{margin-top:26px;font-size:clamp(28px,3vw,38px);letter-spacing:-.035em;line-height:1.1}
+.card h3 em{color:var(--bronze)}
+.card ol{margin:22px 0 0;padding-left:1.3em;display:grid;gap:12px;font-size:18px;font-weight:300;color:var(--body)}
+.card ol b{font-weight:500;color:var(--ink)}
+.card ol li::marker{font-family:var(--grace);font-style:italic;color:var(--bronze)}
+.sig{margin-top:30px;font-family:var(--hand);font-size:clamp(48px,6vw,68px);line-height:.9;color:var(--ink)}
+
+/* limits + appendix */
+.limits{margin-top:120px;display:flex;flex-wrap:wrap;gap:40px 72px}
+.limits > div{flex:1 1 420px;min-width:0}
+.limits h3{font-size:clamp(26px,2.6vw,34px);letter-spacing:-.03em;line-height:1.1}
+.limits h3 em{color:var(--bronze)}
+details{margin-top:22px;border-top:1px solid var(--ink);border-bottom:1px solid var(--rule)}
+summary{list-style:none;cursor:pointer;padding:18px 0;display:flex;justify-content:space-between;gap:12px;font-size:17px;font-weight:500}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-family:var(--grace);font-size:26px;line-height:.8;color:var(--bronze);transition:transform .5s var(--ease)}
+details[open] summary::after{transform:rotate(45deg)}
+.tech{padding-bottom:24px;font-size:16px;font-weight:300;color:var(--body)}
+.tech p{margin:0 0 14px}
+.tech b{font-weight:500;color:var(--ink)}
+.math{font-family:var(--grace);font-style:italic;font-size:19px;color:var(--ink);background:rgba(233,224,208,.6);padding:16px 18px;margin:0 0 16px;line-height:1.7}
+
+.defs{margin:0 0 18px;display:grid;grid-template-columns:72px minmax(0,1fr);gap:12px 16px;font-size:15px;line-height:1.6}
+.defs dt{font-weight:500;color:var(--bronze)}
+.defs dd{margin:0}
+.defs i,.tech i{font-family:var(--grace);font-size:1.12em}
+.math .lbl{display:block;font-family:var(--voice);font-style:normal;font-size:13px;font-weight:500;color:var(--bronze);margin:10px 0 2px}
+.math .lbl:first-child{margin-top:0}
+.math .why{font-family:var(--voice);font-style:normal;font-size:13px;color:var(--graphite);margin-left:6px}
+/* next */
+.next{margin-top:150px;border-top:1px solid var(--ink)}
+.next a{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:20px;padding:40px 0 30px;text-decoration:none}
+.next .label{display:block}
+.next b{display:block;margin-top:12px;font-weight:500;font-size:clamp(34px,4.6vw,64px);letter-spacing:-.045em;line-height:1}
+.next q{display:block;margin-top:14px;font-family:var(--grace);font-style:italic;font-size:22px;color:var(--body);quotes:"“" "”"}
+.next span.go{font-size:16px;font-weight:500;border-bottom:1px solid var(--ink);padding-bottom:4px;display:inline-flex;gap:10px;transition:color .5s var(--ease)}
+.next a:hover span.go{color:var(--bronze)}
+footer{margin-top:80px;border-top:1px solid var(--rule);padding-block:28px 56px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:space-between;font-size:14px;color:var(--graphite)}
+footer em{font-size:20px;color:var(--ink)}
+.reveal{will-change:transform,opacity}
+@media (prefers-reduced-motion:reduce){.gild.is-lit{animation:none}}
+</style>
+</head>
+<body>
+<header class="nav">
+  <div class="wrap nav__in">
+    <a class="brand" href="./">Arnav Chudiwale</a>
+    <nav aria-label="Primary"><ul>
+      <li><a href="./#decisions">Decisions</a></li>
+      <li><a href="./#experience">Experience</a></li>
+      <li><a href="./#note">About</a></li>
+      <li><a href="./#contact">Contact</a></li>
+    </ul></nav>
+  </div>
+</header>
+
+<aside class="rail" aria-label="Chapters">
+  <span class="rail__fill" id="railFill"></span>
+  <ol>
+    <li data-ch="feasible"><i></i><span>feasible</span></li>
+    <li data-ch="optimal"><i></i><span>optimal</span></li>
+    <li data-ch="engineered"><i></i><span>engineered</span></li>
+  </ol>
+</aside>
+
+<main>
+<!-- ======================================================= HERO -->
+<section class="hero wrap" id="top">
+  <div class="crumb"><i></i><span>Decision 2 · Circular supply chain</span><a href="./#decisions">All decisions</a></div>
+  <h1>Can our returns become <em class="gild">revenue</em> instead of waste?</h1>
+
+  <div class="memo">
+    <div class="memo__a"><span class="label">The answer</span><p>Yes. Grade every returned phone, and open two refurbishment centers: one in Fresno, one in Reno.</p></div>
+    <div><span class="label">Recovered per phone</span><div class="stat">$22 <em class="gold">→</em> $141</div><span>from a flat recycler price to graded resale</span></div>
+    <div><span class="label">Three-year value</span><div class="stat">$2.6M</div><span>net present value, base case, after all running costs</span></div>
+    <div><span class="label">Under stress</span><div class="stat">3 of 3</div><span>scenarios stay profitable; prices can fall 25% before it breaks even</span></div>
+  </div>
+  <p class="meta">Independent project · Modeled on public data · January to February 2026 · Python, Gurobi, ArcGIS Pro, Power BI</p>
+
+  <figure class="sieve" id="sieve">
+    <div class="sieve__top">
+      <span class="label" id="sieveLabel"><em>Fig. 1</em> · Today: every phone, one price</span>
+      <div class="sieve__count"><b id="perPhone">$22</b><span>recovered per phone</span></div>
+    </div>
+    <canvas id="sieveCanvas" aria-label="Animation: returned phones flow from stores into a single recycler bin worth 22 dollars each; then a grading gate sorts them into like-new, repairable and parts streams, and the value per phone rises to 141 dollars"></canvas>
+    <figcaption><span>Each dot is a returned phone. Grading sends it where it is worth the most.</span><button type="button" class="ghost" id="sieveAgain">Watch it again</button></figcaption>
+  </figure>
+</section>
+
+<!-- ======================================================= I. FEASIBLE -->
+<section class="ch wrap" id="feasible">
+  <div class="ch__head">
+    <div>
+      <div class="ch__no"><i></i>I · feasible</div>
+      <h2 class="split-h">Every phone, <em>one price.</em></h2>
+    </div>
+    <p class="ch__lede reveal">A retailer was throwing away most of the value in its returns, and every option on the table would have worked. The question was which one was worth the most.</p>
+  </div>
+
+  <div class="split">
+    <div class="split__text">
+      <ul class="pts">
+        <li class="reveal"><b>54 stores</b> across California, at real store locations of a major electronics retailer, take back about <b>28,000 phones a year</b>.</li>
+        <li class="reveal">Every one goes to a bulk recycler for a flat <b>$22</b>, whatever its condition, on a cycle of 60 days or more.</li>
+        <li class="reveal">A phone loses about <b>$4 of resale value a week</b> while it waits.</li>
+        <li class="reveal">A quarter are like new and 45% only need repair. The recycler pays the same for them as for a broken screen.</li>
+        <li class="reveal">Five candidate sites could host a refurbishment center, each able to process 20,000 to 25,000 phones a year. No single site can take all 28,140, so of the 31 possible networks, <b>26 can serve all 54 stores</b>.</li>
+      </ul>
+      <div class="counter" aria-live="polite"><b id="netNo">26</b><span id="netLabel">feasible networks</span></div>
+    </div>
+    <figure class="split__fig map" id="mapA">
+      <svg viewBox="60 140 420 520" role="img" aria-label="Map of the 54 California store locations and the five candidate refurbishment sites: Fremont, Ontario, San Diego, Fresno and Reno">
+        <g class="links"></g><g class="stores"></g><g class="sites"></g><g class="names"></g>
+      </svg>
+      <figcaption><span><em>Fig. 2</em> · Real store locations. Each frame is one possible network.</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ======================================================= II. OPTIMAL -->
+<section class="ch wrap" id="optimal">
+  <div class="ch__head">
+    <div>
+      <div class="ch__no"><i></i>II · optimal</div>
+      <h2 class="split-h">The closest sites were <em>not the cheapest.</em></h2>
+    </div>
+    <p class="ch__lede reveal">I asked the same network two different questions. They gave two different answers, and only one of them saves money.</p>
+  </div>
+
+  <div class="split">
+    <figure class="split__fig map" id="mapB">
+      <svg viewBox="60 140 420 520" role="img" aria-label="Map comparing two networks: the distance-minimizing network sends stores to Fremont and Ontario; the cost-minimizing network sends 37 stores to Fresno and 17 to Reno">
+        <g class="links"></g><g class="stores"></g><g class="sites"></g><g class="names"></g>
+      </svg>
+      <figcaption><span><em>Fig. 3</em> · Every line is one store's returns.</span></figcaption>
+    </figure>
+    <div class="split__text">
+      <span class="label">Ask the network</span>
+      <div class="switch" role="group" aria-label="Choose the objective">
+        <button type="button" id="mDist" aria-pressed="false">Minimize distance</button>
+        <button type="button" id="mCost" aria-pressed="true">Minimize cost</button>
+      </div>
+      <div class="modes">
+        <div id="cardDist"><span class="label">Closest</span><b>Fremont + Ontario</b>
+          <dl><dt>Average trip</dt><dd>54 miles</dd><dt>Facility cost</dt><dd>$2.03M a year</dd></dl></div>
+        <div id="cardCost" class="on"><span class="label">Cheapest</span><b>Fresno + Reno</b>
+          <dl><dt>Average trip</dt><dd>258 miles</dd><dt>Facility cost</dt><dd>$1.54M a year</dd></dl></div>
+      </div>
+      <p class="verdict" id="verdict">Phones travel almost <span class="hl">five times farther</span>, and the network costs <b>$490,000 less</b> every year.</p>
+    </div>
+  </div>
+
+  <div class="bars" id="bars">
+    <h3 class="reveal">Why: a building costs about <em>1,200 times</em> more than the trucks.</h3>
+    <div class="bar">
+      <div class="bar__row"><span>Running two centers, per year</span><b>$1,540,000</b></div>
+      <div class="bar__track"><div class="bar__fill" id="barFixed"></div></div>
+    </div>
+    <div class="bar">
+      <div class="bar__row"><span>Moving every phone to them, per year</span><b>$1,251</b></div>
+      <div class="bar__track"><div class="bar__fill thin" id="barMove"></div><span class="bar__note" id="barNote">barely a line</span></div>
+    </div>
+    <p class="ch__lede reveal" style="margin-top:28px;max-width:44em">A phone weighs under half a pound, so moving it 100 miles costs under two cents. Choosing the cheapest buildings matters far more than choosing the closest ones.</p>
+  </div>
+
+  <div class="grades" id="grades">
+    <div class="grades__text">
+      <h3 class="reveal">Where the value comes from: <em>grading.</em></h3>
+      <p class="reveal">Once phones are sorted by condition, each one goes where it is worth the most. Value recovered is net of processing and of the time each phone spends in transit.</p>
+      <div class="compare reveal"><s>$22</s><b class="gild">$141</b><span>per phone, on average</span></div>
+    </div>
+    <div class="mix">
+      <div class="mix__bar" id="mixBar"><div class="mix__a">25%</div><div class="mix__b">45%</div><div class="mix__c">30%</div></div>
+      <div class="mix__legend"><div><b>Like new</b>Tested, wiped, resold</div><div><b>Repairable</b>Screen or battery replaced, resold refurbished</div><div><b>Parts</b>Components harvested, the rest recycled</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================= III. ENGINEERED -->
+<section class="ch wrap" id="engineered">
+  <div class="ch__head">
+    <div>
+      <div class="ch__no"><i></i>III · engineered</div>
+      <h2 class="split-h">It still works when <em>the market turns.</em></h2>
+    </div>
+    <p class="ch__lede reveal">$2.25M of capital, $1.55M a year to run (the $1.54M of buildings plus freight and handling), and the $619,000 recycler income given up. Move the two things that matter most and watch the answer.</p>
+  </div>
+
+  <div class="lab">
+    <div class="lab__controls">
+      <div class="ctl"><label for="price">Resale prices <output id="priceOut">plan</output></label>
+        <input type="range" id="price" min="-40" max="20" step="1" value="0">
+        <small>What a refurbished phone sells for, against the plan.</small></div>
+      <div class="ctl"><label for="vol">Return volume <output id="volOut">plan</output></label>
+        <input type="range" id="vol" min="-30" max="30" step="1" value="0">
+        <small>How many phones come back each year, against 28,140.</small></div>
+      <button type="button" class="ghost reset" id="labReset">Back to the plan</button>
+    </div>
+    <div class="lab__out" aria-live="polite">
+      <span class="label">Three-year net present value, at 10%</span>
+      <div class="npv" id="npv">$2.6M</div>
+      <div class="lab__sub"><span>Payback <b id="pay">14 months</b></span><span>Added value, year one <b id="cf1">$1.87M</b></span></div>
+      <div class="lab__verdict" id="labVerdict">Worth doing.</div>
+      <div class="curve"><svg id="curve" viewBox="0 0 520 200" role="img" aria-label="Net present value against change in resale prices; it crosses zero at about 25 percent below plan"></svg></div>
+    </div>
+  </div>
+
+  <div class="scen">
+    <div><span class="label">Conservative</span><b>$0.9M</b><p>Prices 10% lower, no growth in returns, costs rising 4% a year.</p></div>
+    <div class="base"><span class="label">Base case</span><b class="gild">$2.6M</b><p>Plan prices, returns growing 3% a year, costs rising 2%.</p></div>
+    <div><span class="label">Optimistic</span><b>$4.1M</b><p>Prices 10% higher, returns growing 5% a year, costs rising 1%.</p></div>
+  </div>
+
+  <div class="tornado">
+    <h3 class="reveal">What actually moves the answer: <em>prices and volume.</em> Not freight.</h3>
+    <p class="ch__lede reveal" style="margin-top:18px;max-width:46em">How to read it: each bar is one input. I moved that input 20% below plan (grey) and 20% above plan (gold), kept everything else at the plan, and measured how far the three-year value moved. The longer the bar, the more the decision depends on getting that input right. A 20% swing in resale prices moves the value by about $2.1M; the same swing in freight moves it by under $1,000.</p>
+    <div class="tor__head"><span>Input moved ±20%</span><span>Change in three-year value</span></div>
+    <div class="tor" id="tor"></div>
+    <div class="tor__legend"><span><i style="background:var(--stone)"></i>20% lower</span><span><i style="background:var(--bronze)"></i>20% higher</span><span>Value = three-year net present value at 10%</span></div>
+  </div>
+
+  <div class="letter">
+    <article class="card reveal" aria-label="Recommendation memo">
+      <dl class="card__hd"><dt>To</dt><dd>Chief Financial Officer</dd><dt>From</dt><dd>Arnav Chudiwale</dd><dt>On</dt><dd>What to do with 28,000 returned phones a year</dd></dl>
+      <h3>Approve <em>two centers.</em> Then protect the price.</h3>
+      <ol>
+        <li><b>Open Fresno and Reno.</b> They are the cheapest network, not the closest, and the difference is $490,000 a year.</li>
+        <li><b>Spend on grading and resale, not logistics.</b> Freight barely moves the result; grading accuracy and resale channels move almost all of it.</li>
+        <li><b>Lock in buyers before scaling.</b> The case survives a 25% fall in resale prices. Price agreements keep it there.</li>
+        <li><b>Track one number monthly:</b> value recovered per phone against the $141 plan.</li>
+      </ol>
+      <div class="sig" aria-label="Signed, Arnav Chudiwale">Arnav Chudiwale</div>
+    </article>
+  </div>
+
+  <div class="limits">
+    <div>
+      <h3>What the model <em>can't tell you.</em></h3>
+      <ul class="pts" style="margin-top:22px">
+        <li>Store locations are real; return volumes and the grade mix are estimates from public return-rate and condition data, not a retailer's records.</li>
+        <li>Distances are straight-line, multiplied by 1.3 for roads. No seasonality, and returns are spread evenly across stores.</li>
+        <li>Grading is assumed 95% accurate, and facility capacity scales in a straight line.</li>
+        <li>An earlier version of this model left out running costs. The figures on this page are corrected.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>For <em>technical readers.</em></h3>
+      <details>
+        <summary>Models, data and tools</summary>
+        <div class="tech">
+          <p><b>The decision.</b> Which of five candidate sites to open, and which site each store sends its returns to. This is a facility-location model: a mixed-integer program solved in Gurobi.</p>
+          <dl class="defs">
+            <dt>Sets</dt><dd><i>i</i> = the 54 stores; <i>j</i> = the 5 candidate sites (Fremont, Ontario, San Diego, Fresno, Reno)</dd>
+            <dt>Given</dt><dd><i>s<sub>i</sub></i> = phones returned at store <i>i</i> each year (28,140 in total)<br><i>d<sub>ij</sub></i> = road miles from store <i>i</i> to site <i>j</i> (straight-line × 1.3)<br><i>t</i> = freight per phone per mile ($0.000172)<br><i>h</i> = handling per phone ($0.35)<br><i>f<sub>j</sub></i> = yearly cost of running site <i>j</i> ($720,000 to $1.05M)<br><i>K<sub>j</sub></i> = phones site <i>j</i> can process a year (20,000 to 25,000)<br><i>p</i> = number of sites to open</dd>
+            <dt>Decide</dt><dd><i>y<sub>j</sub></i> = 1 if site <i>j</i> opens, else 0<br><i>x<sub>ij</sub></i> = 1 if store <i>i</i> sends its returns to site <i>j</i>, else 0</dd>
+          </dl>
+          <p class="math"><span class="lbl">Objective · lowest yearly cost</span>minimize &nbsp; Σ<sub>j</sub> f<sub>j</sub> y<sub>j</sub> &nbsp;+&nbsp; Σ<sub>i</sub> Σ<sub>j</sub> s<sub>i</sub> ( t d<sub>ij</sub> + h ) x<sub>ij</sub><br><span class="lbl">Constraints</span>Σ<sub>j</sub> x<sub>ij</sub> = 1 &nbsp; for every store &nbsp;<span class="why">each store uses exactly one site</span><br>x<sub>ij</sub> ≤ y<sub>j</sub> &nbsp; for every store and site &nbsp;<span class="why">only open sites receive phones</span><br>Σ<sub>i</sub> s<sub>i</sub> x<sub>ij</sub> ≤ K<sub>j</sub> y<sub>j</sub> &nbsp; for every site &nbsp;<span class="why">no site over capacity</span><br>Σ<sub>j</sub> y<sub>j</sub> = p &nbsp;<span class="why">open exactly p sites</span></p>
+          <p><b>How it was used.</b> Solved for <i>p</i> = 2 to 5 (one site cannot process all 28,140 phones); two sites give the lowest total. The distance benchmark keeps the same constraints but minimizes Σ s<sub>i</sub> d<sub>ij</sub> x<sub>ij</sub> (phone-miles) and picks Fremont + Ontario. As a first cut, ArcGIS Pro Network Analyst location-allocation, which ignores capacity, picked Ontario alone.</p>
+          <p><b>The business case.</b> NPV = −C + Σ<sub>t=1..3</sub> CF<sub>t</sub> / 1.1<sup>t</sup>, where each year's added cash CF<sub>t</sub> = (R − B)(1 + g)<sup>t</sup> − O(1 + i)<sup>t</sup>. R = value recovered ($3.97M a year), B = recycler income given up ($619,000), O = running cost of the network ($1.55M), C = capital ($2.25M), g = growth in returns (3%), i = cost inflation (2%).</p>
+          <p><b>Data.</b> 54 real store locations; site costs from California industrial rents; Haversine distances over 270 store-site pairs; freight from 2024 California less-than-truckload rates; Power BI dashboards.</p>
+          <p><a href="https://github.com/arnav-chudiwale" class="gold">Code on GitHub →</a></p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <nav class="next" aria-label="Next decision">
+    <a href="decision-3.html">
+      <div><span class="label">Next · Decision 3 · Service resilience</span><b>When demand more than doubles</b><q>Can we keep our delivery promise when demand more than doubles?</q></div>
+      <span class="go">Read the decision <span aria-hidden="true">→</span></span>
+    </a>
+  </nav>
+</section>
+</main>
+
+<footer><div class="wrap"><span><em>Decisions, engineered.</em></span><span>Arnav Chudiwale · 2026</span></div></footer>
+
+<script>
+// every decision page opens at its top, however the visitor arrived
+(() => {
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  const toTop = () => {
+    if (location.hash) return;
+    window.scrollTo(0, 0);
+    try { document.getElementById('top').scrollIntoView({ block: 'start' }); window.scrollTo(0, 0); } catch (e) {}
+    if (window.__lenis) window.__lenis.scrollTo(0, { immediate: true, force: true });
+  };
+  toTop();
+  document.addEventListener('DOMContentLoaded', toTop);
+  window.addEventListener('load', () => { toTop(); requestAnimationFrame(toTop); });
+  window.addEventListener('pageshow', e => { if (e.persisted) toTop(); });
+})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/SplitText.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/DrawSVGPlugin.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js"></script>
+<script>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const NS = 'http://www.w3.org/2000/svg';
+  const mk = (tag, a, p) => { const e = document.createElementNS(NS, tag); for (const k in a) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; };
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const money = v => (v < 0 ? '−' : '') + '$' + (Math.abs(v) >= 1e6 ? (Math.abs(v) / 1e6).toFixed(1) + 'M' : Math.round(Math.abs(v) / 1e3) + 'K');
+
+  // ------------------------------------------------ the business case (same inputs as the corrected model)
+  const REC = 3968946.29, BASE = 619080, FIXED = 1540000, MOVE = 1251, HANDLE = 10099, CAPEX = 2250000, R = 0.10;
+  const model = ({ price = 1, vol = 1, g = 0.03, infl = 0.02, fixed = 1, capex = 1, move = 1 } = {}) => {
+    const opex = FIXED * fixed + MOVE * move * vol + HANDLE * vol;
+    const cfs = [1, 2, 3].map(t => (REC * price - BASE) * vol * Math.pow(1 + g, t) - opex * Math.pow(1 + infl, t));
+    const npv = -CAPEX * capex + cfs.reduce((s, c, i) => s + c / Math.pow(1 + R, i + 1), 0);
+    return { npv, cfs, pay: cfs[0] > 0 ? CAPEX * capex / cfs[0] * 12 : Infinity };
+  };
+
+  // ------------------------------------------------ map data: real store locations, projected
+  const S = [[142.2,321.3],[137.5,316.7],[135.7,322.9],[323.6,527.7],[320.5,528.5],[322.6,527.5],[329.0,529.1],[334.7,522.9],[316.5,531.4],[328.9,522.9],[329.0,523.1],[321.8,539.5],[311.0,520.1],[314.3,516.8],[365.9,525.1],[323.9,543.3],[348.1,537.9],[323.7,539.6],[321.8,531.8],[319.0,522.6],[339.2,524.3],[355.7,555.1],[348.7,557.3],[359.8,561.1],[348.0,550.8],[348.0,552.5],[342.6,551.1],[385.4,612.4],[383.1,605.7],[381.8,592.0],[390.2,619.7],[390.8,589.2],[248.7,351.7],[290.2,444.5],[140.3,364.5],[426.3,547.9],[374.8,533.8],[126.0,308.8],[126.6,308.5],[137.7,312.6],[116.9,299.7],[119.3,302.6],[119.6,283.3],[138.5,292.5],[131.8,279.5],[108.4,277.5],[113.7,286.4],[112.3,285.6],[110.1,290.3],[121.3,301.1],[132.9,276.7],[164.5,233.7],[172.6,223.0],[186.9,296.1]];
+  const SITES = [{ n: 'Fremont', p: [135.4, 302], l: [72, 330] }, { n: 'Ontario', p: [360.3, 528.3], l: [398, 520] }, { n: 'San Diego', p: [387.7, 608.3], l: [402, 628] }, { n: 'Fresno', p: [268.7, 352], l: [288, 348] }, { n: 'Reno', p: [248.2, 173.4], l: [268, 168] }];
+  const BEST = S.map((_, i) => i < 37 ? 3 : 4); // the model's assignment: 37 stores to Fresno, 17 to Reno
+  const f = n => Math.round(n * 10) / 10;
+  const curve = (a, b) => `M${a[0]} ${a[1]} Q${f((a[0] + b[0]) / 2 + (b[1] - a[1]) * .12)} ${f((a[1] + b[1]) / 2 - (b[0] - a[0]) * .12)} ${b[0]} ${b[1]}`;
+  const nearest = (p, open) => open.reduce((best, i) => { const d = Math.hypot(p[0] - SITES[i].p[0], p[1] - SITES[i].p[1]); return d < best.d ? { i, d } : best; }, { i: open[0], d: 1e9 }).i;
+  const buildMap = fig => {
+    const svg = $('svg', fig), links = $('.links', svg);
+    const linkEls = S.map(() => mk('path', { class: 'link' }, links));
+    S.forEach(p => mk('circle', { class: 'store', cx: p[0], cy: p[1], r: 2.6 }, $('.stores', svg)));
+    const siteEls = SITES.map(s => { const c = mk('circle', { class: 'site', cx: s.p[0], cy: s.p[1], r: 9 }, $('.sites', svg)); mk('circle', { class: 'site__dot', cx: s.p[0], cy: s.p[1], r: 3 }, $('.sites', svg)); return c; });
+    const names = SITES.map(s => { const t = mk('text', { x: s.l[0], y: s.l[1] }, $('.names', svg)); t.textContent = s.n; return t; });
+    const show = (open, assign, best) => {
+      siteEls.forEach((el, i) => el.classList.toggle('open', open.includes(i)));
+      names.forEach((el, i) => el.classList.toggle('on', open.includes(i)));
+      linkEls.forEach((el, k) => { el.setAttribute('d', curve(S[k], SITES[assign ? assign[k] : nearest(S[k], open)].p)); el.classList.toggle('best', !!best); });
+    };
+    return { linkEls, show };
+  };
+  const mapA = buildMap($('#mapA')), mapB = buildMap($('#mapB'));
+  const subsets = []; for (let m = 1; m < 32; m++) subsets.push([0, 1, 2, 3, 4].filter(i => m >> i & 1));
+  mapA.show([0, 1, 2, 3, 4], null, false);
+  const DIST = S.map(p => nearest(p, [0, 1]));
+  mapB.show([3, 4], BEST, true);
+
+  // ------------------------------------------------ the switch
+  const setMode = mode => {
+    const cost = mode === 'cost';
+    $('#mCost').setAttribute('aria-pressed', cost); $('#mDist').setAttribute('aria-pressed', !cost);
+    $('#cardCost').classList.toggle('on', cost); $('#cardDist').classList.toggle('on', !cost);
+    mapB.show(cost ? [3, 4] : [0, 1], cost ? BEST : DIST, cost);
+    $('#verdict').innerHTML = cost ? 'Phones travel almost <span class="hl">five times farther</span>, and the network costs <b>$490,000 less</b> every year.' : 'The shortest trips, and <b>$490,000 more</b> a year in buildings.';
+    if (window.gsap && !reduce) gsap.fromTo(mapB.linkEls, { drawSVG: 0 }, { drawSVG: '100%', duration: 1.4, ease: 'power3.inOut', stagger: { each: 0.01, from: 'start' } });
+  };
+  $('#mDist').addEventListener('click', () => setMode('dist'));
+  $('#mCost').addEventListener('click', () => setMode('cost'));
+
+  // ------------------------------------------------ the lab
+  const price = $('#price'), vol = $('#vol');
+  const pct = v => v == 0 ? 'plan' : (v > 0 ? '+' : '−') + Math.abs(v) + '%';
+  const curveSvg = $('#curve');
+  const W = 520, H = 200, padL = 46, padR = 12, padT = 14, padB = 30;
+  const xs = v => padL + (v + 40) / 60 * (W - padL - padR);
+  const npvRange = [-2.5e6, 5.5e6];
+  const ys = v => padT + (npvRange[1] - v) / (npvRange[1] - npvRange[0]) * (H - padT - padB);
+  mk('line', { class: 'axis', x1: padL, y1: H - padB, x2: W - padR, y2: H - padB }, curveSvg);
+  mk('line', { class: 'zero', x1: padL, y1: ys(0), x2: W - padR, y2: ys(0) }, curveSvg);
+  [[-40, '−40%'], [-20, '−20%'], [0, 'plan'], [20, '+20%']].forEach(([v, t]) => { const e = mk('text', { x: xs(v), y: H - 10, 'text-anchor': 'middle' }, curveSvg); e.textContent = t; });
+  const z = mk('text', { x: padL - 8, y: ys(0) + 4, 'text-anchor': 'end' }, curveSvg); z.textContent = '$0';
+  const linePath = mk('path', { class: 'line' }, curveSvg);
+  let be = 0;
+  const drawCurve = v => {
+    let d = '';
+    for (let p = -40; p <= 20; p += 1) { const n = model({ price: 1 + p / 100, vol: v }).npv; d += (p === -40 ? 'M' : 'L') + f(xs(p)) + ' ' + f(ys(Math.max(npvRange[0], Math.min(npvRange[1], n)))); }
+    linePath.setAttribute('d', d);
+    let lo = -0.9, hi = 0.5; for (let i = 0; i < 50; i++) { const m = (lo + hi) / 2; if (model({ price: 1 + m, vol: v }).npv > 0) hi = m; else lo = m; } be = hi * 100;
+    beLine.setAttribute('x1', xs(Math.max(-40, be))); beLine.setAttribute('x2', xs(Math.max(-40, be)));
+    beText.setAttribute('x', xs(Math.max(-40, be)) + 6); beText.textContent = be > -40 ? 'breaks even at ' + Math.round(be) + '%' : '';
+  };
+  const beLine = mk('line', { class: 'be', y1: padT, y2: H - padB }, curveSvg);
+  const beText = mk('text', { class: 'r', y: padT + 12 }, curveSvg);
+  const dot = mk('circle', { r: 6 }, curveSvg);
+  const update = () => {
+    const p = +price.value, v = +vol.value;
+    $('#priceOut').textContent = pct(p); $('#volOut').textContent = pct(v);
+    const m = model({ price: 1 + p / 100, vol: 1 + v / 100 });
+    const npvEl = $('#npv'); npvEl.textContent = money(m.npv); npvEl.classList.toggle('neg', m.npv < 0);
+    $('#pay').textContent = isFinite(m.pay) && m.pay < 120 ? Math.round(m.pay) + ' months' : 'never';
+    $('#cf1').textContent = money(m.cfs[0]);
+    $('#labVerdict').textContent = m.npv > 1.5e6 ? 'Worth doing.' : m.npv > 0 ? 'Still worth doing, with less room for error.' : 'Not worth doing at these numbers.';
+    drawCurve(1 + v / 100);
+    dot.setAttribute('cx', xs(p)); dot.setAttribute('cy', ys(Math.max(npvRange[0], Math.min(npvRange[1], m.npv))));
+  };
+  price.addEventListener('input', update); vol.addEventListener('input', update);
+  const resetBtn = $('#labReset');
+  const syncReset = () => { const at = +price.value === 0 && +vol.value === 0; resetBtn.disabled = at; resetBtn.textContent = at ? 'You are on the plan' : 'Back to the plan'; };
+  price.addEventListener('input', syncReset); vol.addEventListener('input', syncReset);
+  resetBtn.addEventListener('click', () => {
+    const from = { p: +price.value, v: +vol.value };
+    if (window.gsap && !reduce) gsap.to(from, { p: 0, v: 0, duration: 0.8, ease: 'power3.inOut', onUpdate: () => { price.value = Math.round(from.p); vol.value = Math.round(from.v); update(); }, onComplete: () => { price.value = 0; vol.value = 0; update(); syncReset(); } });
+    else { price.value = 0; vol.value = 0; update(); syncReset(); }
+  });
+  syncReset();
+  update();
+
+  // ------------------------------------------------ tornado: computed from the same model
+  const base = model().npv;
+  const rows = [
+    ['Resale prices', o => model({ price: o })],
+    ['Return volume', o => model({ vol: o })],
+    ['Facility costs', o => model({ fixed: o })],
+    ['Capital', o => model({ capex: o })],
+    ['Freight', o => model({ move: o })]
+  ].map(([n, fn]) => ({ n, lo: fn(0.8).npv - base, hi: fn(1.2).npv - base }));
+  const maxAbs = Math.max(...rows.flatMap(r => [Math.abs(r.lo), Math.abs(r.hi)]));
+  const tor = $('#tor');
+  rows.forEach(r => {
+    const row = document.createElement('div'); row.className = 'tor__row';
+    const left = Math.min(r.lo, r.hi), right = Math.max(r.lo, r.hi);
+    const lw = Math.max(0, -left) / maxAbs * 50, rw = Math.max(0, right) / maxAbs * 50;
+    const loIsLeft = r.lo <= r.hi;
+    row.innerHTML = `<span>${r.n}</span><div class="tor__track"><div class="tor__lo" style="width:${lw}%;${loIsLeft ? '' : 'background:var(--bronze)'}"></div><div class="tor__hi" style="width:${rw}%;${loIsLeft ? '' : 'background:var(--stone)'}"></div></div><span class="tor__val">±${money(Math.max(Math.abs(r.lo), Math.abs(r.hi))).replace('−', '')}</span>`;
+    tor.appendChild(row);
+  });
+
+  // ------------------------------------------------ the sieve
+  const cvs = $('#sieveCanvas'), ctx = cvs.getContext('2d');
+  let Wc = 0, Hc = 0, dpr = 1;
+  const size = () => { dpr = Math.min(2, window.devicePixelRatio || 1); Wc = cvs.clientWidth; Hc = cvs.clientHeight; cvs.width = Wc * dpr; cvs.height = Hc * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); };
+  size(); window.addEventListener('resize', size);
+  const lanes = [{ p: .25, c: '#A47A33', n: 'Like new · resold', v: '25%' }, { p: .45, c: '#8A6427', n: 'Repairable · refurbished', v: '45%' }, { p: .30, c: '#8C8579', n: 'Parts · harvested', v: '30%' }];
+  let parts = [], sorted = false, t0 = performance.now(), shown = 22, raf = 0, seen = false;
+  const gateX = () => Wc * 0.46, binX = () => Wc * 0.9;
+  const laneY = i => Hc * (0.22 + i * 0.28);
+  const spawn = () => ({ x: -6, y: Hc * (0.12 + Math.random() * 0.76), vx: (Wc / 900) * (1.1 + Math.random() * 0.8), lane: -1, k: Math.random() });
+  const pickLane = r => r < .25 ? 0 : r < .70 ? 1 : 2;
+  const step = now => {
+    const el = (now - t0) / 1000;
+    if (!sorted && el > 3.2) { sorted = true; $('#sieveLabel').innerHTML = '<em>Fig. 1</em> · With grading: every phone goes where it is worth most'; }
+    if (parts.length < 150 && Math.random() < 0.55) parts.push(spawn());
+    ctx.clearRect(0, 0, Wc, Hc);
+    // the gate
+    const gx = gateX();
+    ctx.strokeStyle = sorted ? 'rgba(138,100,39,.9)' : 'rgba(22,23,27,.12)'; ctx.lineWidth = sorted ? 1.6 : 1;
+    ctx.beginPath(); ctx.moveTo(gx, Hc * .06); ctx.lineTo(gx, Hc * .94); ctx.stroke();
+    ctx.font = 'italic 17px "Instrument Serif", Georgia, serif'; ctx.textAlign = 'center';
+    ctx.fillStyle = sorted ? '#8A6427' : 'rgba(91,86,77,.6)'; ctx.fillText(sorted ? 'grading' : 'no grading', gx, Hc * .05 + 2);
+    // destinations
+    ctx.textAlign = 'right';
+    if (!sorted) {
+      ctx.fillStyle = 'rgba(140,133,121,.18)'; ctx.fillRect(binX() - 10, Hc * .3, Wc - binX() + 10, Hc * .4);
+      ctx.fillStyle = '#5B564D'; ctx.font = '500 14px "Hanken Grotesk", sans-serif'; ctx.fillText('Bulk recycler · $22 each', Wc - 6, Hc * .3 - 10);
+    } else {
+      lanes.forEach((l, i) => { ctx.fillStyle = l.c; ctx.font = '500 14px "Hanken Grotesk", sans-serif'; ctx.fillText(l.n + ' · ' + l.v, Wc - 6, laneY(i) - 14); ctx.globalAlpha = .18; ctx.fillRect(binX() - 10, laneY(i) - 6, Wc - binX() + 10, 12); ctx.globalAlpha = 1; });
+    }
+    // phones
+    parts = parts.filter(p => p.x < Wc + 10);
+    parts.forEach(p => {
+      p.x += p.vx;
+      let ty;
+      if (p.x > gx) {
+        if (sorted) { if (p.lane < 0) p.lane = pickLane(p.k); ty = laneY(p.lane) + (p.k - .5) * 8; }
+        else ty = Hc * .5 + (p.k - .5) * Hc * .34;
+        p.y += (ty - p.y) * 0.06;
+      }
+      ctx.fillStyle = p.x > gx && sorted ? lanes[p.lane].c : 'rgba(22,23,27,.55)';
+      ctx.beginPath(); ctx.arc(p.x, p.y, 2.6, 0, Math.PI * 2); ctx.fill();
+    });
+    // value counter
+    const target = sorted ? 141 : 22;
+    shown += (target - shown) * 0.035;
+    $('#perPhone').textContent = '$' + Math.round(shown);
+    raf = requestAnimationFrame(step);
+  };
+  const restart = () => { parts = []; sorted = false; shown = 22; t0 = performance.now(); $('#sieveLabel').innerHTML = '<em>Fig. 1</em> · Today: every phone, one price'; };
+  if (reduce) {
+    sorted = true; for (let i = 0; i < 400; i++) { if (parts.length < 150) parts.push(spawn()); parts.forEach(p => p.x += p.vx); }
+    shown = 141; t0 = -1e9; step(performance.now()); cancelAnimationFrame(raf);
+  } else {
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { if (!seen) { seen = true; restart(); } if (!raf) raf = requestAnimationFrame(step); } else { cancelAnimationFrame(raf); raf = 0; } });
+    io.observe(cvs);
+  }
+  $('#sieveAgain').addEventListener('click', restart);
+
+  // ------------------------------------------------ gold sweeps
+  const gio = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-lit'); gio.unobserve(e.target); } }), { rootMargin: '0px 0px -12% 0px' });
+  $$('.gild').forEach(el => gio.observe(el));
+
+  if (!window.gsap || reduce) return;
+  gsap.registerPlugin(ScrollTrigger, SplitText, DrawSVGPlugin);
+  gsap.defaults({ ease: 'expo.out' });
+  const lenis = new Lenis({ lerp: 0.09, smoothWheel: true });
+  window.__lenis = lenis; if (!location.hash) lenis.scrollTo(0, { immediate: true, force: true });
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add(t => lenis.raf(t * 1000)); gsap.ticker.lagSmoothing(0);
+  $$('a[href^="#"]').forEach(a => a.addEventListener('click', e => { const t = $(a.getAttribute('href')); if (t) { e.preventDefault(); lenis.scrollTo(t, { offset: -90, duration: 1.6 }); } }));
+
+  // hero
+  const h1 = SplitText.create('.hero h1', { type: 'lines', mask: 'lines' });
+  gsap.timeline().from('.crumb', { autoAlpha: 0, y: 12, duration: 1 }, 0).from(h1.lines, { yPercent: 105, duration: 1.5, stagger: 0.12 }, 0.1).from('.memo > div', { autoAlpha: 0, y: 24, duration: 1.3, stagger: 0.1 }, 0.6).from('.meta', { autoAlpha: 0, duration: 1 }, 1.1);
+
+  // chapter heads and reveals, tied to scroll so they rewind
+  $$('.split-h').forEach(el => { const s = SplitText.create(el, { type: 'lines', mask: 'lines' }); gsap.from(s.lines, { yPercent: 105, stagger: 0.1, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 90%', end: 'top 60%', scrub: 1.2 } }); });
+  $$('.reveal').forEach(el => gsap.from(el, { autoAlpha: 0, y: 30, ease: 'power2.out', scrollTrigger: { trigger: el, start: 'top 92%', end: 'top 70%', scrub: 1.2 } }));
+  $$('.ch__no').forEach(el => gsap.from(el, { autoAlpha: 0, x: -20, ease: 'power2.out', scrollTrigger: { trigger: el, start: 'top 92%', end: 'top 75%', scrub: 1 } }));
+
+  // rail: which chapter am I in
+  const chapters = ['feasible', 'optimal', 'engineered'];
+  const current = () => chapters.slice().reverse().find(id => $('#' + id).getBoundingClientRect().top < innerHeight * .55) || '';
+  ScrollTrigger.create({ trigger: '#feasible', start: 'top 55%', endTrigger: '#engineered', end: 'bottom 55%', onUpdate: s => { $('#railFill').style.height = (s.progress * 100) + '%'; const c = current(); chapters.forEach(id => $(`.rail li[data-ch="${id}"]`).classList.toggle('on', chapters.indexOf(id) <= chapters.indexOf(c))); } });
+
+  // I. flicker through the feasible networks (two or more sites), settle on 26
+  const order = gsap.utils.shuffle(subsets.filter(o => o.length >= 2));
+  const netNo = $('#netNo'), netLabel = $('#netLabel');
+  ScrollTrigger.create({ trigger: '#mapA', start: 'top 70%', once: true, onEnter: () => {
+    const tl = gsap.timeline(); const shown = order.slice(0, 16);
+    shown.forEach((open, k) => {
+      const dur = gsap.utils.interpolate(0.5, 0.1, k / (shown.length - 1));
+      tl.call(() => { mapA.show(open, null, false); netNo.textContent = k + 1; netLabel.textContent = 'feasible networks'; })
+        .fromTo(mapA.linkEls, { drawSVG: 0 }, { drawSVG: '100%', duration: dur, ease: 'power2.out', stagger: { each: dur / 120, from: 'random' } });
+    });
+    tl.call(() => { netNo.textContent = '26'; netLabel.textContent = 'feasible networks. Which one is worth the most?'; mapA.show([0, 1, 2, 3, 4], null, false); })
+      .fromTo(mapA.linkEls, { drawSVG: 0 }, { drawSVG: '100%', duration: 1.2, ease: 'power3.inOut', stagger: { each: 0.01, from: 'random' } });
+  } });
+
+  // II. the cost-optimal network draws itself on arrival
+  ScrollTrigger.create({ trigger: '#mapB', start: 'top 70%', once: true, onEnter: () => gsap.fromTo(mapB.linkEls, { drawSVG: 0 }, { drawSVG: '100%', duration: 1.8, ease: 'power3.inOut', stagger: { each: 0.012, from: 'start' } }) });
+
+  // the bars: the building bar sweeps out, the truck bar stays a hairline
+  gsap.fromTo('#barFixed', { scaleX: 0 }, { scaleX: 1, ease: 'power3.inOut', scrollTrigger: { trigger: '#bars', start: 'top 75%', end: 'top 40%', scrub: 1.2 } });
+  gsap.fromTo('#barNote', { autoAlpha: 0, x: -10 }, { autoAlpha: 1, x: 0, ease: 'power2.out', scrollTrigger: { trigger: '#bars', start: 'top 55%', end: 'top 35%', scrub: 1.2 } });
+  // the mix bar fills in grade by grade
+  gsap.fromTo('#mixBar > div', { scaleX: 0 }, { scaleX: 1, stagger: 0.25, ease: 'power3.out', scrollTrigger: { trigger: '#grades', start: 'top 80%', end: 'top 45%', scrub: 1.2 } });
+  // tornado bars grow from the center
+  gsap.from('.tor__lo, .tor__hi', { scaleX: 0, stagger: 0.06, ease: 'power3.out', scrollTrigger: { trigger: '#tor', start: 'top 85%', end: 'top 50%', scrub: 1.2 } });
+  gsap.from('.scen > div', { autoAlpha: 0, y: 36, stagger: 0.15, ease: 'power2.out', scrollTrigger: { trigger: '.scen', start: 'top 90%', end: 'top 60%', scrub: 1.2 } });
+  gsap.from('#curve .line', { drawSVG: 0, ease: 'power2.inOut', scrollTrigger: { trigger: '.lab', start: 'top 75%', end: 'top 35%', scrub: 1.2 } });
+})();
+</script>
+</body>
+</html>
